@@ -4,7 +4,7 @@ import bcrypt from "bcrypt"
 import multer from "multer"
 import path from "path"
 import Department from '../models/Department.js'
-
+import mongoose from "mongoose"
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "public/uploads")
@@ -46,7 +46,7 @@ const addEmployee = async (req, res) => {
         gender,
         maritalStatus,
         designation,
-        department,
+        department: new mongoose.Types.ObjectId(department),
         salary
     })
     await newEmployee.save()
