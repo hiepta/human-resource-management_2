@@ -111,7 +111,7 @@ const Detail = () => {
         <div>
         </div>
     </div>
-    ): <div>Loading ...</div>}</>
+    ): <div>Loading nghỉ phép...</div>}</>
   )
 }
 

@@ -16,7 +16,7 @@ const Table = () => {
             console.log(response.data)
             if(response.data.success){
               let sno = 1;
-                const data = await response.data.leaves.map((leave) =>(
+                const data = response.data.leaves.filter((leave) => leave.employeeId && leave.employeeId.userId && leave.employeeId.department).map((leave) =>(
                   {
                     _id: leave._id,
                     sno: sno++,
@@ -79,7 +79,7 @@ const Table = () => {
         </div>
     </div>
     ) : (
-      <div>Loading ...</div>
+      <div>Loading table ...</div>
     )}
     </>
   )

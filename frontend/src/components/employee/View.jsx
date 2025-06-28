@@ -80,6 +80,7 @@ const View = () => {
                     <p className='text-lg font-bold text-black'>Tình trạng hôn nhân: </p>
                     <p className='font-medium text-black'>{employee.maritalStatus} </p>
                 </div>
+                
             </div>
         </div>
         <div>
