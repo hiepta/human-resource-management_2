@@ -27,6 +27,10 @@ import Detail from './components/leave/Detail'
 import ContractList from './components/contract/List'
 import AddContract from './components/contract/Add'
 import EditContract from './components/contract/Edit'
+
+import SocialInsuranceList from './components/socialInsurance/List'
+import SocialInsuranceAdd from './components/socialInsurance/Add'
+import SocialInsuranceEdit from './components/socialInsurance/Edit'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -59,6 +63,10 @@ function App() {
           <Route path="/admin-dashboard/contracts" element={<ContractList/>}></Route>
           <Route path="/admin-dashboard/contracts/add" element={<AddContract/>}></Route>
           <Route path="/admin-dashboard/contracts/edit/:id" element={<EditContract/>}></Route>
+
+          <Route path="/admin-dashboard/social-insurance" element={<SocialInsuranceList/>}></Route>
+          <Route path="/admin-dashboard/social-insurance/add" element={<SocialInsuranceAdd/>}></Route>
+          <Route path="/admin-dashboard/social-insurance/edit/:id" element={<SocialInsuranceEdit/>}></Route>
           <Route path='/admin-dashboard/leaves' element={<Table/>}></Route>
           <Route path='/admin-dashboard/leaves/:id' element={<Detail/>}></Route>
           <Route path='/admin-dashboard/employees/leaves/:id' element={<LeaveList/>}></Route>

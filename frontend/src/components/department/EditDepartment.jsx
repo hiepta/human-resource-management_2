@@ -65,10 +65,10 @@ const EditDepartment = () => {
 
         <div className='mt-3'>
             <label htmlFor='description' className='block text-sm font-medium text-gray-700'>Mô tả</label>
-            <textarea name='description' placeholder='Description' value={department.description}
+            <textarea name='description' placeholder='Mô tả' value={department.description}
              onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md' rows="4"></textarea>
         </div>
-        <button type='submit' className='w-full mt-6 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded'>Edit Department</button>
+        <button type='submit' className='w-full mt-6 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded'>Chỉnh sửa phòng ban</button>
       </form>
     </div>
     }</>

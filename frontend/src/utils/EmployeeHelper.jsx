@@ -106,10 +106,11 @@ export const fetchDepartments = async () => {
     return (
         <div className="flex space-x-3">
             <button className="px-3 py-1 bg-teal-600 text-white"
-             onClick={() => navigate(`/admin-dashboard/employees/${Id}`)}>View</button>
-            <button className="px-3 py-1 bg-blue-600 text-white" onClick={() => navigate(`/admin-dashboard/employees/edit/${Id}`)}>Edit</button>
-            <button className="px-3 py-1 bg-yellow-600 text-white" onClick={() => navigate(`/admin-dashboard/employees/salary/${Id}`)}>Salary</button>
-            <button className="px-3 py-1 bg-red-600 text-white" onClick={() => navigate(`/admin-dashboard/employees/leaves/${Id}`)}>Leave</button>
+             onClick={() => navigate(`/admin-dashboard/employees/${Id}`)}>Xem</button>
+            <button className="px-3 py-1 bg-blue-600 text-white" onClick={() => navigate(`/admin-dashboard/employees/edit/${Id}`)}>Sửa</button>
+            <button className="px-3 py-1 bg-yellow-600 text-white" onClick={() => navigate(`/admin-dashboard/employees/salary/${Id}`)}>Lương</button>
+            <button className="px-3 py-1 bg-purple-600 text-white" onClick={() => navigate(`/admin-dashboard/social-insurance/add?employee=${Id}`)}>BHXH</button>
+            <button className="px-3 py-1 bg-red-600 text-white" onClick={() => navigate(`/admin-dashboard/employees/leaves/${Id}`)}>Nghỉ phép</button>
         </div>
     )
 }

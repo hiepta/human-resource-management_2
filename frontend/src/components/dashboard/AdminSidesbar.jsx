@@ -33,9 +33,9 @@ const AdminSidesBar = () => {
             <span>Lương</span>
         </NavLink>
 
-        <NavLink to="/admin-dashboard" className="flex items-center space-x-4 block py-2.5 px-4 rounded">
+        <NavLink to="/admin-dashboard/social-insurance" className={({isActive}) => `${isActive ? "bg-teal-500 " : " "}flex items-center space-x-4 block py-2.5 px-4 rounded`}>
             <FaMoneyBillWave/>
-            <span>Bảo hiểm và thuế</span>
+            <span>Bảo hiểm</span>
         </NavLink>
 
         <NavLink to="/admin-dashboard" className="flex items-center space-x-4 block py-2.5 px-4 rounded">
