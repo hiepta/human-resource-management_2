@@ -82,6 +82,25 @@ export const fetchDepartments = async () => {
     return employees
   }
 
+  export const fetchAllEmployees = async () => {
+    let employees
+    try {
+      const response = await axios.get('http://localhost:5000/api/employee',{ 
+        headers:{
+          "Authorization" : `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      if(response.data.success){
+        employees = response.data.employees
+      }
+    }catch(error){
+      if(error.response && !error.response.data.success){
+        alert(error.response.data.error)
+      }
+    }
+    return employees
+}
+
   export const EmployeeButtons = ({Id}) => {
     const navigate = useNavigate()
     return (

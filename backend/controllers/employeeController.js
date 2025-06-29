@@ -19,7 +19,8 @@ const upload = multer({storage: storage})
 const addEmployee = async (req, res) => {
     try{
     const {
-        name, email, employeeId, dob, phoneNumber, address, identification, gender, maritalStatus, designation, department, salary, password, role
+        name, email, employeeId, dob, phoneNumber, address, identification, gender, maritalStatus, designation, department, salary, password, role,
+        skill,education,certificate,dilopma
     } = req.body;
 
     const user = await User.findOne({email})
@@ -47,7 +48,7 @@ const addEmployee = async (req, res) => {
         maritalStatus,
         designation,
         department: new mongoose.Types.ObjectId(department),
-        salary
+        salary,skill,education,certificate,dilopma
     })
     await newEmployee.save()
     return res.status(200).json({success: true, message: "employee created"})
@@ -86,7 +87,7 @@ const updateEmployee = async(req, res) => {
     try{
         const {id} = req.params;
         const {
-            name, maritalStatus, designation, department, salary, address, employeeId
+            name, maritalStatus, designation, department, salary, address, employeeId,skill,education,certificate,dilopma
         } = req.body;
         const employee = await Employee.findById({_id: id})
         if(!employee){

@@ -109,6 +109,35 @@ const Add = () => {
         </div>
         
         <div>
+            <label className='block text-sm font-medium text-gray-700'>Bằng cấp</label>
+            <select name='dilopma' onChange={handleChange} placeholder='Bằng cấp' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'>
+                <option value="">Bằng cấp</option>
+                <option value="cử nhân">Cử nhân</option>
+                <option value="kĩ sư">Kĩ sư</option>
+            </select>
+        </div>
+
+        <div>
+            <label className='block text-sm font-medium text-gray-700'>Trình độ học vấn</label>
+            <select name='education' onChange={handleChange} placeholder='Trình độ học vấn' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'>
+                <option value="">Trình độ học vấn</option>
+                <option value="đại học">Đại học</option>
+                <option value="cao đẳng">Cao đẳng</option>
+            </select>
+        </div>
+
+        <div>
+            <label className='block text-sm font-medium text-gray-700'>Chứng chỉ liên quan</label>
+            <input type="text" onChange={handleChange} name='certificate' placeholder='Chứng chỉ' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'/>
+        </div>
+
+        <div>
+            <label className='block text-sm font-medium text-gray-700'>Kĩ năng</label>
+            <input type="text" onChange={handleChange} name='skill' placeholder='Kĩ năng' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'/>
+        </div>
+
+
+        <div>
             <label className='block text-sm font-medium text-gray-700'>Tình trạng hôn nhân</label>
             <select name='maritalStatus' onChange={handleChange} placeholder='Marital Status' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'>
                 <option value="">Tình trạng hôn nhân</option>

@@ -80,6 +80,26 @@ const View = () => {
                     <p className='text-lg font-bold text-black'>Tình trạng hôn nhân: </p>
                     <p className='font-medium text-black'>{employee.maritalStatus} </p>
                 </div>
+
+                <div className='flex space-x-3 mb-5'>
+                    <p className='text-lg font-bold text-black'>Bằng cấp: </p>
+                    <p className='font-medium text-black'>{employee.dilopma} </p>
+                </div>
+
+                <div className='flex space-x-3 mb-5'>
+                    <p className='text-lg font-bold text-black'>Trình độ học vấn: </p>
+                    <p className='font-medium text-black'>{employee.education} </p>
+                </div>
+
+                <div className='flex space-x-3 mb-5'>
+                    <p className='text-lg font-bold text-black'>Chứng chỉ liên quan: </p>
+                    <p className='font-medium text-black'>{employee.certificate} </p>
+                </div>
+
+                <div className='flex space-x-3 mb-5'>
+                    <p className='text-lg font-bold text-black'>Kĩ năng: </p>
+                    <p className='font-medium text-black'>{employee.skill} </p>
+                </div>
                 
             </div>
         </div>

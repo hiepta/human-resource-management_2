@@ -24,6 +24,9 @@ import AddLeave from './components/leave/Add'
 import Setting from './components/EmployeeDashboard/Setting'
 import Table from './components/leave/Table'
 import Detail from './components/leave/Detail'
+import ContractList from './components/contract/List'
+import AddContract from './components/contract/Add'
+import EditContract from './components/contract/Edit'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -53,6 +56,9 @@ function App() {
           <Route path="/admin-dashboard/employees/salary/:id" element={<ViewSalary/>}></Route>
           
           <Route path="/admin-dashboard/salary/add" element={<AddSalary/>}></Route>
+          <Route path="/admin-dashboard/contracts" element={<ContractList/>}></Route>
+          <Route path="/admin-dashboard/contracts/add" element={<AddContract/>}></Route>
+          <Route path="/admin-dashboard/contracts/edit/:id" element={<EditContract/>}></Route>
           <Route path='/admin-dashboard/leaves' element={<Table/>}></Route>
           <Route path='/admin-dashboard/leaves/:id' element={<Detail/>}></Route>
           <Route path='/admin-dashboard/employees/leaves/:id' element={<LeaveList/>}></Route>
