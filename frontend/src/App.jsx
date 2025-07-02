@@ -27,7 +27,7 @@ import Detail from './components/leave/Detail'
 import ContractList from './components/contract/List'
 import AddContract from './components/contract/Add'
 import EditContract from './components/contract/Edit'
-
+import ContractView from './components/contract/View'
 import SocialInsuranceList from './components/socialInsurance/List'
 import SocialInsuranceAdd from './components/socialInsurance/Add'
 import SocialInsuranceEdit from './components/socialInsurance/Edit'
@@ -92,6 +92,7 @@ function App() {
           <Route path='/employee-dashboard/salary/:id' element={<ViewSalary/>}></Route>
           <Route path='/employee-dashboard/social-insurance/:id' element={<EmployeeInsuranceList/>}></Route>
           <Route path='/employee-dashboard/attendance' element={<AttendancePage/>}></Route>
+          <Route path='/employee-dashboard/contracts/:id' element={<ContractView/>}></Route>
           <Route path='/employee-dashboard/setting' element={<Setting/>}></Route>
 
           </Route>

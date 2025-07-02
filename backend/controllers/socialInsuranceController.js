@@ -44,6 +44,25 @@ const getSocialInsurance = async (req, res) => {
     }
 };
 
+const getEmployeeSocialInsurance = async (req, res) => {
+    try {
+        const { id, role } = req.params;
+        let records;
+        if (role === 'admin') {
+            records = await SocialInsurance.find({ employeeId: id }).populate('employeeId', 'employeeId');
+        } else {
+            const employee = await Employee.findOne({ userId: id });
+            if (!employee) {
+                return res.status(404).json({ success: false, error: 'Employee not found' });
+            }
+            records = await SocialInsurance.find({ employeeId: employee._id }).populate('employeeId', 'employeeId');
+        }
+        return res.status(200).json({ success: true, records });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: 'Social insurance get server error' });
+    }
+};
+
 const updateSocialInsurance = async (req, res) => {
     try {
         const { id } = req.params;
@@ -74,4 +93,4 @@ const deleteSocialInsurance = async (req, res) => {
     }
 };
 
-export { addSocialInsurance, getSocialInsurances, getSocialInsurance, updateSocialInsurance, deleteSocialInsurance };
+export {getEmployeeSocialInsurance, addSocialInsurance, getSocialInsurances, getSocialInsurance, updateSocialInsurance, deleteSocialInsurance };

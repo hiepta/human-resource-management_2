@@ -10,6 +10,7 @@ import contractRouter from './routes/contract.js'
 import socialInsuranceRouter from './routes/socialInsurance.js'
 import settingRouter from './routes/setting.js'
 import dashboardRouter from './routes/dashboard.js'
+import attendanceRouter from './routes/attendance.js'
 import dotenv from 'dotenv'
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use('/api/contract', contractRouter)
 app.use('/api/social-insurance', socialInsuranceRouter)
 app.use('/api/setting', settingRouter)
 app.use('/api/dashboard', dashboardRouter)
+app.use('/api/attendance', attendanceRouter)
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is Running on port ${process.env.PORT}`)

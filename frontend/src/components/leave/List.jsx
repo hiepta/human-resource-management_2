@@ -5,6 +5,7 @@ import { useAuth } from '../../context/authContext'
 
 const List = () => {
   const [leaves, setLeaves] = useState(null)
+  const [daysLeft, setDaysLeft] = useState(null)
   let sno = 1;
   const {id} = useParams()
   const {user} = useAuth()
@@ -18,6 +19,7 @@ const List = () => {
         console.log(response.data)
         if(response.data.success){
             setLeaves(response.data.leaves)
+            setDaysLeft(response.data.daysLeft)
         }
     }catch(error){
         if(error.response && !error.response.data.success){
@@ -37,6 +39,9 @@ useEffect(() => {
     <div className='p-6'>
       <div className='text-center'>
         <h3 className='text-2xl font-bold text-black'>Quản lí ngày nghỉ</h3>
+        {daysLeft !== null && (
+          <p className='text-sm text-black mt-1'>Số ngày nghỉ còn lại: {daysLeft}</p>
+        )}
       </div>
       <div className='flex justify-between items-center'>
         <input type="text" placeholder = 'Seach By Dep Name' className='px-4 py-0.5 border'/>
@@ -54,6 +59,7 @@ useEffect(() => {
                             <th className='px-6 py-3'>Đến</th>
                             <th className='px-6 py-3'>Mô tả</th>
                             <th className='px-6 py-3'>Trạng thái</th>
+                            <th className='px-6 py-3'>Ngày còn lại</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -66,6 +72,7 @@ useEffect(() => {
                                     <td className='px-6 py-3'>{new Date(leave.endDate).toLocaleDateString()}</td>
                                     <td className='px-6 py-3'>{leave.reason}</td>
                                     <td className='px-6 py-3'>{leave.status}</td>
+                                    <td className='px-6 py-3'>{leave.daysLeft ?? daysLeft}</td>
                                 </tr>
                             ))
                         }

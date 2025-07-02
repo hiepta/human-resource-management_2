@@ -1,5 +1,5 @@
 import Contract from "../models/Contract.js";
-
+import Employee from "../models/Employee.js";
 const addContract = async (req, res) => {
     try {
         const { employeeId, startDate, endDate, signDate, signTimes, salaryCoefficient, term } = req.body;
@@ -77,4 +77,25 @@ const deleteContract = async (req, res) => {
     }
 };
 
-export { addContract, getContracts, getContract, updateContract, deleteContract };
+const getContractsByRole = async (req, res) => {
+    try {
+        const { id, role } = req.params;
+        let contracts;
+        if(role === "admin"){
+            contracts = await Contract.find({ employeeId: id }).populate({
+                path: 'employeeId',
+                populate: { path: 'userId', select: 'name' }
+            });
+        }else{
+            const employee = await Employee.findOne({ userId: id });
+            contracts = await Contract.find({ employeeId: employee._id }).populate({
+                path: 'employeeId',
+                populate: { path: 'userId', select: 'name' }
+            });
+        }
+        return res.status(200).json({ success: true, contracts });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: "Contract get server error" });
+    }
+};
+export { addContract, getContracts, getContract, updateContract, deleteContract, getContractsByRole };

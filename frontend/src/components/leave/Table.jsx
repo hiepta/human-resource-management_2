@@ -27,6 +27,7 @@ const Table = () => {
                     days: 
                       new Date(leave.endDate).getDate() - 
                       new Date(leave.startDate).getDate(),
+                    daysLeft: leave.daysLeft,
                     status: leave.status,
                     action: <LeaveButtons Id={leave._id}/>
                   }

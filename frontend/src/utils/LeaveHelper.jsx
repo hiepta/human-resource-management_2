@@ -38,6 +38,12 @@ export const columns = [
     },
 
     {
+        name: "Số ngày còn lại",
+        selector: (row) => row.daysLeft,
+        width: "120px",
+    },
+
+    {
         name: "Trạng thái",
         selector: (row) => row.status,
         width: "120px",

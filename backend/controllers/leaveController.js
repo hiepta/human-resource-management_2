@@ -26,9 +26,19 @@ const getLeave = async(req, res) => {
             leaves = await Leave.find({employeeId: id})
         }else{
             const employee = await Employee.findOne({userId: id})
-            leaves = await Leave.find({employeeId: employee._id})
+            leaves = await Leave.find({employeeId: employee?._id})
         }
-        return res.status(200).json({success: true, leaves})
+        const currentYear = new Date().getFullYear()
+        const daysTaken = leaves.reduce((acc, leave) => {
+            const start = new Date(leave.startDate)
+            if(start.getFullYear() === currentYear){
+                const end = new Date(leave.endDate)
+                acc += end.getDate() - start.getDate()
+            }
+            return acc
+        }, 0)
+        const daysLeft = 12 - daysTaken
+        return res.status(200).json({success: true, leaves, daysLeft})
     }catch(error){
         console.log(error.message)
         return res.status(500).json({success: false, error: "Leave add server error"})
@@ -51,7 +61,29 @@ const getLeaves = async(req, res) => {
                 }
             ]
         })
-        return res.status(200).json({success: true, leaves})
+        const currentYear = new Date().getFullYear()
+        const daysByEmployee = {}
+        leaves.forEach((leave) => {
+            if(!leave.employeeId) return
+            const id = leave.employeeId._id.toString()
+            const start = new Date(leave.startDate)
+            if(start.getFullYear() === currentYear){
+                const end = new Date(leave.endDate)
+                daysByEmployee[id] = (daysByEmployee[id] || 0) + (end.getDate() - start.getDate())
+            }
+        })
+        const leavesWithDays = leaves.map((leave) => {
+            const obj = leave.toObject()
+            if(leave.employeeId){
+                const id = leave.employeeId._id.toString()
+                const taken = daysByEmployee[id] || 0
+                obj.daysLeft = 12 - taken
+            }else{
+                obj.daysLeft = null
+            }
+            return obj
+        })
+        return res.status(200).json({success: true, leaves: leavesWithDays})
     }catch(error){
         console.log(error.message)
         return res.status(500).json({success: false, error: "Leave add server error"})
