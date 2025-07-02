@@ -30,10 +30,12 @@ const getLeave = async(req, res) => {
         }
         const currentYear = new Date().getFullYear()
         const daysTaken = leaves.reduce((acc, leave) => {
-            const start = new Date(leave.startDate)
-            if(start.getFullYear() === currentYear){
-                const end = new Date(leave.endDate)
-                acc += end.getDate() - start.getDate()
+            if(leave.status === "Approved"){
+                const start = new Date(leave.startDate)
+                if(start.getFullYear() === currentYear){
+                    const end = new Date(leave.endDate)
+                    acc += end.getDate() - start.getDate()
+                }
             }
             return acc
         }, 0)
@@ -65,6 +67,7 @@ const getLeaves = async(req, res) => {
         const daysByEmployee = {}
         leaves.forEach((leave) => {
             if(!leave.employeeId) return
+            if(leave.status !== "Approved") return
             const id = leave.employeeId._id.toString()
             const start = new Date(leave.startDate)
             if(start.getFullYear() === currentYear){

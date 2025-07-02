@@ -4,7 +4,9 @@ import DataTable from 'react-data-table-component';
 import { columns } from '../../utils/AttendanceHelper';
 
 const List = () => {
-  const [attendances, setAttendances] = useState(null);
+  // const [attendances, setAttendances] = useState(null);
+  const [attendances, setAttendances] = useState([]);
+  const [loading, setLoading] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,11 +29,16 @@ const List = () => {
             completed: att.isCompleted ? 'Yes' : 'No',
           }));
           setAttendances(data);
+        }else{
+          setAttendances([]);
         }
       } catch (error) {
         if (error.response && !error.response.data.success) {
           alert(error.response.data.error);
         }
+        setAttendances([]);
+      }finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -42,13 +49,16 @@ const List = () => {
       <div className='text-center'>
         <h3 className='text-2xl font-bold text-black'>Chấm công</h3>
       </div>
-      {attendances ? (
-        <div className='mt-6'>
-          <DataTable columns={columns} data={attendances} pagination />
-        </div>
-      ) : (
-        <div>Loading ...</div>
-      )}
+      <div className='mt-6'>
+        <DataTable
+          columns={columns}
+          data={attendances}
+          pagination
+          progressPending={loading}
+          progressComponent={<div>Loading ...</div>}
+          noDataComponent={<div>No attendance records</div>}
+        />
+      </div>
     </div>
   );
 };

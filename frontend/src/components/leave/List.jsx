@@ -9,6 +9,10 @@ const List = () => {
   let sno = 1;
   const {id} = useParams()
   const {user} = useAuth()
+  const calculateRowDaysLeft = (leave) => {
+    const diff = new Date(leave.endDate).getDate() - new Date(leave.startDate).getDate();
+    return leave.status === "Approved" ? 12 - diff : 12;
+  }
   const fetchLeaves = async () => {
     try{
         const response = await axios.get(`http://localhost:5000/api/leave/${id}/${user.role}`,{
@@ -72,7 +76,7 @@ useEffect(() => {
                                     <td className='px-6 py-3'>{new Date(leave.endDate).toLocaleDateString()}</td>
                                     <td className='px-6 py-3'>{leave.reason}</td>
                                     <td className='px-6 py-3'>{leave.status}</td>
-                                    <td className='px-6 py-3'>{leave.daysLeft ?? daysLeft}</td>
+                                    <td className='px-6 py-3'>{calculateRowDaysLeft(leave)}</td>
                                 </tr>
                             ))
                         }
