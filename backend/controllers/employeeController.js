@@ -125,4 +125,18 @@ const updateEmployee = async(req, res) => {
         }
     }
 
-export {addEmployee, upload, getEmployees, getEmployee, updateEmployee, fetchEmployeesByDepId}
+    const deleteEmployee = async (req, res) => {
+        try{
+            const {id} = req.params;
+            const employee = await Employee.findById({_id: id})
+            if(!employee){
+                return res.status(404).json({success: false, error: "employee not found"})
+            }
+            await User.findByIdAndDelete(employee.userId)
+            await employee.deleteOne()
+            return res.status(200).json({success: true})
+        }catch(error){
+            return res.status(500).json({success: false, error: "delete employee server error"})
+        }
+    }
+export {addEmployee, upload, getEmployees, getEmployee, updateEmployee, fetchEmployeesByDepId, deleteEmployee}

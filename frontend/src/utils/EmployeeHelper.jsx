@@ -101,15 +101,34 @@ export const fetchDepartments = async () => {
     return employees
 }
 
-  export const EmployeeButtons = ({Id}) => {
+export const EmployeeButtons = ({Id, onEmployeeDelete}) => {
     const navigate = useNavigate()
+    const handleDelete = async(id) => {
+      const confirmDelete = window.confirm("Do you want to delete?")
+      if(confirmDelete){
+          try{
+              const response = await axios.delete(`http://localhost:5000/api/employee/${id}`, {
+                  headers: {
+                      "Authorization" : `Bearer ${localStorage.getItem('token')}`
+                  }
+              })
+              if(response.data.success){
+                  onEmployeeDelete && onEmployeeDelete(id)
+              }
+          }catch(error){
+              if(error.response && !error.response.data.success){
+                  alert(error.response.data.error)
+              }
+          }
+      }
+  }
     return (
         <div className="flex space-x-3">
             <button className="px-3 py-1 bg-teal-600 text-white"
              onClick={() => navigate(`/admin-dashboard/employees/${Id}`)}>Xem</button>
             <button className="px-3 py-1 bg-blue-600 text-white" onClick={() => navigate(`/admin-dashboard/employees/edit/${Id}`)}>Sửa</button>
+            <button className="px-3 py-1 bg-gray-600 text-white" onClick={() => handleDelete(Id)}>Xóa</button>
             <button className="px-3 py-1 bg-yellow-600 text-white" onClick={() => navigate(`/admin-dashboard/employees/salary/${Id}`)}>Lương</button>
-            {/* <button className="px-3 py-1 bg-purple-600 text-white" onClick={() => navigate(`/admin-dashboard/social-insurance/add?employee=${Id}`)}>BHXH</button> */}
             <button className="px-3 py-1 bg-red-600 text-white" onClick={() => navigate(`/admin-dashboard/employees/leaves/${Id}`)}>Nghỉ phép</button>
         </div>
     )

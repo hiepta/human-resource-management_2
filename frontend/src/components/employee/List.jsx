@@ -10,8 +10,12 @@ const List = () => {
   const [empLoading, setEmpLoading] = useState(false)
   const [filteredEmployee, setFilteredEmployees] = useState([])
 
-  useEffect(() => {
-    const fetchEmployees =async () => {
+  const onEmployeeDelete = (id) => {
+    setEmployees(prev => prev.filter(emp => emp._id !== id))
+    setFilteredEmployees(prev => prev.filter(emp => emp._id !== id))
+  }
+
+  const fetchEmployees = async () => {
       setEmpLoading(true)
       try {
         const response = await axios.get('http://localhost:5000/api/employee',{
@@ -20,8 +24,8 @@ const List = () => {
           }
         })
         if(response.data.success){
-          let sno = 1;
-          console.log(response.data)
+          // let sno = 1;
+          // console.log(response.data)
             const data = response.data.employees.filter(emp => emp.userId).map((emp, index) => (
               {
                 _id: emp._id,
@@ -37,7 +41,7 @@ const List = () => {
                     alt={emp.userId.name}
                   />
                 ),
-                action: <EmployeeButtons Id={emp._id} />,
+                 action: <EmployeeButtons Id={emp._id} onEmployeeDelete={onEmployeeDelete}/>,
               }
             ))
             
@@ -52,8 +56,9 @@ const List = () => {
         setEmpLoading(false)
       }
     }
+  useEffect(() => {
     fetchEmployees();
-  }, [])
+}, [])
 
   const handleFilter = (e) => {
     const records = employees.filter((emp) => (
