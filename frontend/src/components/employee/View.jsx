@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-
+import Chatbot from '../chatbot/Chatbot'
 const View = () => {
     const {id} = useParams()
     const [employee, setEmployee] = useState(null)
@@ -27,6 +27,7 @@ const View = () => {
       }, [])
   return (
     <>{employee ? (
+        <>
     <div className='max-w-3xl mx-auto mt-10 bg-white p-8 rounded shadow-md'>
         <h2 className='text-2xl font-bold mb-8 text-center text-black'>
             Hồ sơ nhân viên
@@ -106,7 +107,9 @@ const View = () => {
         <div>
         </div>
     </div>
-    ): <div>Loading ...</div>}</>
+    <Chatbot userId={employee.userId._id} />
+    </>
+    ) : <div>Loading ...</div>}</>
   )
 }
 
