@@ -59,13 +59,15 @@ const checkOut = async (req, res) => {
 
 const getAttendances = async (req, res) => {
     try {
-        const attendances = await Attendance.find().populate({
-            path: 'employeeId',
-            populate: [
-                { path: 'department', select: 'dep_name' },
-                { path: 'userId', select: 'name employeeId' }
-            ]
-        });
+        const attendances = await Attendance.find()
+            .populate({
+                path: 'employeeId',
+                populate: [
+                    { path: 'department', select: 'dep_name' },
+                    { path: 'userId', select: 'name' }
+                ]
+            })
+            .sort({ date: -1 });
         return res.status(200).json({ success: true, attendances });
     } catch (error) {
         console.log(error.message);

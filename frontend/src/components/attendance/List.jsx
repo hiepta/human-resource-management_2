@@ -6,7 +6,7 @@ import { columns } from '../../utils/AttendanceHelper';
 const List = () => {
   // const [attendances, setAttendances] = useState(null);
   const [attendances, setAttendances] = useState([]);
-  const [loading, setLoading] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,10 +21,10 @@ const List = () => {
           const data = response.data.attendances.map((att) => ({
             _id: att._id,
             sno: sno++,
-            employeeId: att.employeeId.employeeId,
-            name: att.employeeId.userId.name,
-            department: att.employeeId.department.dep_name,
-            date: new Date(att.date).toLocaleDateString(),
+            employeeId: att.employeeId?.employeeId || '',
+            name: att.employeeId?.userId?.name || '',
+            department: att.employeeId?.department?.dep_name || '',
+            date: att.date ? new Date(att.date).toLocaleDateString() : '',
             status: att.status,
             completed: att.isCompleted ? 'Yes' : 'No',
           }));
@@ -54,7 +54,7 @@ const List = () => {
           columns={columns}
           data={attendances}
           pagination
-          progressPending={loading}
+          progressPending={loading && attendances.length === 0}
           progressComponent={<div>Loading ...</div>}
           noDataComponent={<div>No attendance records</div>}
         />
