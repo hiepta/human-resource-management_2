@@ -7,6 +7,8 @@ const Chatbot = ({ userId }) => {
     { sender: 'bot', text: 'Xin chào! Bạn muốn hỏi điều gì?' }
   ])
   const [input, setInput] = useState('')
+  const [pending, setPending] = useState(null)
+  // const [askLeave, setAskLeave] = useState(false)
 
   const toggleOpen = () => setOpen((prev) => !prev)
 
@@ -16,6 +18,73 @@ const Chatbot = ({ userId }) => {
     setMessages((prev) => [...prev, { sender: 'user', text }])
     setInput('')
     const lower = text.toLowerCase()
+
+    if (pending === 'confirmLeaveToday') {
+      if (['yes', 'y', 'co', 'có'].includes(lower)) {
+        try {
+          await axios.post('http://localhost:5000/api/chatbot/request-leave-today', { userId }, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+          })
+          setMessages((prev) => [...prev, { sender: 'bot', text: 'Đã ghi nhận ngày nghỉ hôm nay.' }])
+        } catch (err) {
+          setMessages((prev) => [...prev, { sender: 'bot', text: 'Không thể tạo yêu cầu nghỉ.' }])
+        }
+      } else {
+        setMessages((prev) => [...prev, { sender: 'bot', text: 'Đã hủy yêu cầu nghỉ.' }])
+      }
+      setPending(null)
+      return
+    }
+
+    if (lower.includes('ngh') && lower.includes('phep')) {
+      setMessages((prev) => [...prev, { sender: 'bot', text: 'Bạn có muốn nghỉ hôm nay không? (yes/no)' }])
+      setPending('confirmLeaveToday')
+      return
+    }
+
+    if (lower.includes('bao') && lower.includes('hiem')) {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/chatbot/social-insurance/${userId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        })
+        if (res.data.success) {
+          setMessages((prev) => [...prev, { sender: 'bot', text: `Mức đóng BHXH hàng tháng của bạn là ${res.data.monthlyAmount}.` }])
+          return
+        }
+      } catch (err) {}
+      setMessages((prev) => [...prev, { sender: 'bot', text: 'Không thể lấy thông tin BHXH.' }])
+      return
+    }
+
+    if (lower.includes('hop dong') || lower.includes('contract')) {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/chatbot/contract-date/${userId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        })
+        if (res.data.success) {
+          const d = new Date(res.data.startDate).toLocaleDateString()
+          setMessages((prev) => [...prev, { sender: 'bot', text: `Ngày ký hợp đồng: ${d}.` }])
+          return
+        }
+      } catch (err) {}
+      setMessages((prev) => [...prev, { sender: 'bot', text: 'Không thể lấy thông tin hợp đồng.' }])
+      return
+    }
+
+    if (lower.includes('nghi huu') || lower.includes('retire')) {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/chatbot/retirement/${userId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        })
+        if (res.data.success) {
+          setMessages((prev) => [...prev, { sender: 'bot', text: `Bạn còn ${res.data.yearsLeft} năm nữa đến tuổi nghỉ hưu.` }])
+          return
+        }
+      } catch (err) {}
+      setMessages((prev) => [...prev, { sender: 'bot', text: 'Không thể tính năm nghỉ hưu.' }])
+      return
+    }
+
     if (lower.includes('day') && lower.includes('off')) {
       try {
         const res = await axios.get(`http://localhost:5000/api/chatbot/days-off-left/${userId}`, {
@@ -25,15 +94,13 @@ const Chatbot = ({ userId }) => {
           setMessages((prev) => [...prev, { sender: 'bot', text: `Bạn còn ${res.data.daysLeft} ngày nghỉ.` }])
           return
         }
-      } catch (err) {
-        // ignore
-      }
+      } catch (err) {}
       setMessages((prev) => [...prev, { sender: 'bot', text: 'Không thể lấy số ngày nghỉ còn lại.' }])
-    } else {
-      setMessages((prev) => [...prev, { sender: 'bot', text: 'Xin lỗi, tôi chỉ có thể trả lời về số ngày nghỉ còn lại.' }])
+      return
     }
-  }
 
+    setMessages((prev) => [...prev, { sender: 'bot', text: 'Xin lỗi, tôi chưa hiểu câu hỏi.' }])
+  }
   if (!open) {
     return (
       <button

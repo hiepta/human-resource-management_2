@@ -3,8 +3,10 @@ import User from "../models/User.js"
 import bcrypt from "bcrypt"
 import multer from "multer"
 import path from "path"
-import Department from '../models/Department.js'
+// import Department from '../models/Department.js'
 import mongoose from "mongoose"
+import SocialInsurance from "../models/SocialInsurance.js"
+import Contract from "../models/Contract.js"
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "public/uploads")
@@ -133,6 +135,8 @@ const updateEmployee = async(req, res) => {
                 return res.status(404).json({success: false, error: "employee not found"})
             }
             await User.findByIdAndDelete(employee.userId)
+            await SocialInsurance.deleteMany({ employeeId: employee._id })
+            await Contract.deleteMany({ employeeId: employee._id })
             await employee.deleteOne()
             return res.status(200).json({success: true})
         }catch(error){
