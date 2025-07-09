@@ -128,7 +128,7 @@ export const EmployeeButtons = ({Id, onEmployeeDelete}) => {
              onClick={() => navigate(`/admin-dashboard/employees/${Id}`)}>Xem</button>
             <button className="px-3 py-1 bg-blue-600 text-white" onClick={() => navigate(`/admin-dashboard/employees/edit/${Id}`)}>Sửa</button>
             <button className="px-3 py-1 bg-gray-600 text-white" onClick={() => handleDelete(Id)}>Xóa</button>
-            <button className="px-3 py-1 bg-yellow-600 text-white" onClick={() => navigate(`/admin-dashboard/employees/salary/${Id}`)}>Lương</button>
+            {/* <button className="px-3 py-1 bg-yellow-600 text-white" onClick={() => navigate(`/admin-dashboard/employees/salary/${Id}`)}>Lương</button> */}
             <button className="px-3 py-1 bg-red-600 text-white" onClick={() => navigate(`/admin-dashboard/employees/leaves/${Id}`)}>Nghỉ phép</button>
         </div>
     )

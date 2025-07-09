@@ -34,10 +34,10 @@ const Sidebar = () => {
             <span>Chấm công</span>
         </NavLink>
 
-        <NavLink to={`/employee-dashboard/salary/${user._id}`} className={({isActive}) => `${isActive ? "bg-teal-500 " : " "}flex items-center space-x-4 block text-white py-2.5 px-4 rounded`}>
+        {/* <NavLink to={`/employee-dashboard/salary/${user._id}`} className={({isActive}) => `${isActive ? "bg-teal-500 " : " "}flex items-center space-x-4 block text-white py-2.5 px-4 rounded`}>
             <FaCalendarAlt/>
             <span>Lương</span>
-        </NavLink>
+        </NavLink> */}
  
         <NavLink to={`/employee-dashboard/social-insurance/${user._id}`} className={({isActive}) => `${isActive ? "bg-teal-500 " : " "}flex items-center space-x-4 block text-white py-2.5 px-4 rounded`}>
             <FaMoneyBillWave/>
