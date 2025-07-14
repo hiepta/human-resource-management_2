@@ -30,10 +30,12 @@ import ContractView from './components/contract/View'
 import SocialInsuranceList from './components/socialInsurance/List'
 import SocialInsuranceAdd from './components/socialInsurance/Add'
 import SocialInsuranceEdit from './components/socialInsurance/Edit'
-
 import AttendanceList from './components/attendance/List'
 import AttendancePage from './components/EmployeeDashboard/Attendance'
 import EmployeeInsuranceList from './components/socialInsurance/EmployeeList'
+import RewardList from './components/reward/List'
+import EmployeeReward from './components/reward/Employee'
+
 function App() {
   const [count, setCount] = useState(0)
 
@@ -64,7 +66,6 @@ function App() {
           <Route path="/admin-dashboard/contracts" element={<ContractList/>}></Route>
           <Route path="/admin-dashboard/contracts/add" element={<AddContract/>}></Route>
           <Route path="/admin-dashboard/contracts/edit/:id" element={<EditContract/>}></Route>
-
           <Route path="/admin-dashboard/social-insurance" element={<SocialInsuranceList/>}></Route>
           <Route path="/admin-dashboard/social-insurance/add" element={<SocialInsuranceAdd/>}></Route>
           <Route path="/admin-dashboard/social-insurance/edit/:id" element={<SocialInsuranceEdit/>}></Route>
@@ -72,6 +73,7 @@ function App() {
           <Route path='/admin-dashboard/leaves/:id' element={<Detail/>}></Route>
           <Route path='/admin-dashboard/employees/leaves/:id' element={<LeaveList/>}></Route>
           <Route path='/admin-dashboard/attendance' element={<AttendanceList/>}></Route>
+          <Route path='/admin-dashboard/reward-discipline' element={<RewardList/>}></Route>
           <Route path='/admin-dashboard/setting' element={<Setting/>}></Route>
 
         </Route>
@@ -90,6 +92,7 @@ function App() {
           <Route path='/employee-dashboard/social-insurance/:id' element={<EmployeeInsuranceList/>}></Route>
           <Route path='/employee-dashboard/attendance' element={<AttendancePage/>}></Route>
           <Route path='/employee-dashboard/contracts/:id' element={<ContractView/>}></Route>
+          <Route path='/employee-dashboard/reward-discipline/:id' element={<EmployeeReward/>}></Route>
           <Route path='/employee-dashboard/setting' element={<Setting/>}></Route>
 
           </Route>

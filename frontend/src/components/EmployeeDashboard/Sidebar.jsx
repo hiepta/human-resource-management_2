@@ -49,6 +49,11 @@ const Sidebar = () => {
             <span>Hợp đồng</span>
         </NavLink>
 
+        <NavLink to={`/employee-dashboard/reward-discipline/${user._id}`} className={({isActive}) => `${isActive ? "bg-teal-500 " : " "}flex items-center space-x-4 block text-white py-2.5 px-4 rounded`}>
+            <FaMoneyBillWave/>
+            <span>Khen thưởng</span>
+        </NavLink>
+
         <NavLink to="/employee-dashboard/setting" className="flex items-center space-x-4 block text-white py-2.5 px-4 rounded">
             <FaCogs/>
             <span>Cài đặt</span>

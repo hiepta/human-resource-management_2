@@ -128,14 +128,20 @@ const getRewardDiscipline = async (req, res) => {
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
 
-        const presentCounts = await Attendance.aggregate([
-            { $match: { date: { $gte: startOfMonth, $lte: endOfMonth }, status: 'Present' } },
-            { $group: { _id: '$employeeId', count: { $sum: 1 } } }
+        const stats = await Attendance.aggregate([
+            { $match: { date: { $gte: startOfMonth, $lte: endOfMonth } } },
+            {
+                $group: {
+                    _id: '$employeeId',
+                    present: { $sum: { $cond: [{ $eq: ['$status', 'Present'] }, 1, 0] } },
+                    late: { $sum: { $cond: [{ $eq: ['$status', 'Late'] }, 1, 0] } }
+                }
+            }
         ]);
 
-        const countMap = {};
-        presentCounts.forEach(item => {
-            countMap[item._id.toString()] = item.count;
+        const statMap = {};
+        stats.forEach(item => {
+            statMap[item._id.toString()] = { present: item.present, late: item.late };
         });
 
         const employees = await Employee.find()
@@ -143,15 +149,19 @@ const getRewardDiscipline = async (req, res) => {
             .populate('department', 'dep_name');
 
         const result = employees.map(emp => {
-            const count = countMap[emp._id.toString()] || 0;
-            const isReward = count > 3;
+            // const count = countMap[emp._id.toString()] || 0;
+            // const isReward = count > 3;
+            const { present = 0, late = 0 } = statMap[emp._id.toString()] || {};
+            const reward = present > 3 ? 300000 : 0;
+            const fine = late > 0 ? 100000 : 0;
             return {
                 employeeId: emp.employeeId,
                 name: emp.userId?.name || '',
                 department: emp.department?.dep_name || '',
-                presentDays: count,
-                action: isReward ? 'Reward' : 'Discipline',
-                amount: isReward ? 500000 : -200000
+                presentDays: present,
+                lateDays: late,
+                reward,
+                fine
             };
         });
 
@@ -161,4 +171,48 @@ const getRewardDiscipline = async (req, res) => {
         return res.status(500).json({ success: false, error: 'Reward-Discipline server error' });
     }
 };
-export { checkIn, checkOut, getAttendances, getTodayAttendance, getRewardDiscipline };
+
+const getEmployeeRewardDiscipline = async (req, res) => {
+    try {
+        const { id, role } = req.params;
+        let employee;
+        if (role === 'admin') {
+            employee = await Employee.findById(id);
+        } else {
+            employee = await Employee.findOne({ userId: id });
+        }
+        if (!employee) {
+            return res.status(404).json({ success: false, error: 'Employee not found' });
+        }
+
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+        const stats = await Attendance.aggregate([
+            {
+                $match: {
+                    employeeId: employee._id,
+                    date: { $gte: startOfMonth, $lte: endOfMonth }
+                }
+            },
+            {
+                $group: {
+                    _id: '$employeeId',
+                    present: { $sum: { $cond: [{ $eq: ['$status', 'Present'] }, 1, 0] } },
+                    late: { $sum: { $cond: [{ $eq: ['$status', 'Late'] }, 1, 0] } }
+                }
+            }
+        ]);
+
+        const { present = 0, late = 0 } = stats[0] || {};
+        const reward = present > 3 ? 300000 : 0;
+        const fine = late > 0 ? 100000 : 0;
+
+        return res.status(200).json({ success: true, record: { presentDays: present, lateDays: late, reward, fine } });
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, error: 'Reward-Discipline server error' });
+    }
+};
+export { checkIn, checkOut, getAttendances, getTodayAttendance, getRewardDiscipline, getEmployeeRewardDiscipline }
