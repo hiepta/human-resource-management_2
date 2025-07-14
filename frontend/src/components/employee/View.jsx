@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+
+import { useParams, Link } from 'react-router-dom'
 import Chatbot from '../chatbot/Chatbot'
 const View = () => {
     const {id} = useParams()
@@ -75,6 +76,13 @@ const View = () => {
                 <div className='flex space-x-3 mb-5'>
                     <p className='text-lg font-bold text-black'>Phòng ban: </p>
                     <p className='font-medium text-black'>{employee.department.dep_name} </p>
+                    {employee.oldDepartment && employee.oldDepartment._id !== employee.department._id ? (
+                        <p className='font-medium text-black'>
+                            {employee.oldDepartment.dep_name} / {employee.department.dep_name}
+                        </p>
+                    ) : (
+                        <p className='font-medium text-black'>{employee.department.dep_name}</p>
+                    )}
                 </div>
 
                 <div className='flex space-x-3 mb-5'>
@@ -107,6 +115,7 @@ const View = () => {
         <div>
         </div>
     </div>
+    {/* ): <div>Loading ...</div>}</> */}
     <Chatbot userId={employee.userId._id} />
     </>
     ) : <div>Loading ...</div>}</>

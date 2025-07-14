@@ -11,6 +11,7 @@ const Edit = () => {
         designation: '',
         salary: 0,
         department: '',
+        oldDepartment: '',
         certificate: '',
         dilopma: '',
         education: '',
@@ -41,9 +42,24 @@ const Edit = () => {
               console.log(response.data)
               if(response.data.success){
                 const employee = response.data.employee
-                setEmployee((prev) => ({...prev, name: employee.userId.name, maritalStatus: employee.maritalStatus,
-                designation: employee.designation, salary: employee.salary, department: employee.department,
-                address: employee.address, employeeId: employee.employeeId,skill:employee.skill, certificate: employee.certificate, education: employee.education, dilopma:employee.dilopma
+                // setEmployee((prev) => ({...prev, name: employee.userId.name, maritalStatus: employee.maritalStatus,
+                // designation: employee.designation, salary: employee.salary, department: employee.department ? employee.department._id : '',
+                // oldDepartment: employee.department ? employee.department._id : '',
+                // address: employee.address, employeeId: employee.employeeId,skill:employee.skill, certificate: employee.certificate, education: employee.education, dilopma:employee.dilopma
+                setEmployee((prev) => ({
+                  ...prev,
+                  name: employee.userId.name,
+                  maritalStatus: employee.maritalStatus,
+                  designation: employee.designation,
+                  salary: employee.salary,
+                  department: employee.department ? employee.department._id : '',
+                  oldDepartment: employee.oldDepartment ? employee.oldDepartment._id : '',
+                  address: employee.address,
+                  employeeId: employee.employeeId,
+                  skill: employee.skill,
+                  certificate: employee.certificate,
+                  education: employee.education,
+                  dilopma: employee.dilopma,
                 }))
               }
             }catch(error){
@@ -53,7 +69,7 @@ const Edit = () => {
             }
           }
           fetchEmployee();
-    }, [])
+    }, [id])
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -155,6 +171,9 @@ const Edit = () => {
                     <option key={dep._id} value={dep._id}>{dep.dep_name}</option>
                 ))}
             </select>
+            {employee.oldDepartment && (
+                <p className='mt-2 text-sm text-gray-600'>Phòng ban cũ: {departments.find(d => d._id === employee.oldDepartment)?.dep_name}</p>
+            )}
         </div>
 
         <button type='submit' className='w-full mt-6 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded required'>

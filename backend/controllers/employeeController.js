@@ -3,10 +3,12 @@ import User from "../models/User.js"
 import bcrypt from "bcrypt"
 import multer from "multer"
 import path from "path"
-// import Department from '../models/Department.js'
+import Department from '../models/Department.js'
 import mongoose from "mongoose"
 import SocialInsurance from "../models/SocialInsurance.js"
 import Contract from "../models/Contract.js"
+
+//Dùng để lưu file ảnh vào thư mục public/ uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "public/uploads")
@@ -15,9 +17,9 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + path.extname(file.originalname))
     }
 })
-
 const upload = multer({storage: storage})
 
+// Thêm nhân viên mới
 const addEmployee = async (req, res) => {
     try{
     const {
@@ -25,6 +27,7 @@ const addEmployee = async (req, res) => {
         skill,education,certificate,dilopma
     } = req.body;
 
+    // Kiểm tra nếu email đã tồn tại trong user 
     const user = await User.findOne({email})
     if(user){
         return res.status(400).json({success: false, error: "User alreadly registered in emp"})
@@ -50,7 +53,13 @@ const addEmployee = async (req, res) => {
         maritalStatus,
         designation,
         department: new mongoose.Types.ObjectId(department),
-        salary,skill,education,certificate,dilopma
+        // salary,skill,education,certificate,dilopma
+        oldDepartment: new mongoose.Types.ObjectId(department),
+        salary,
+        skill,
+        education,
+        certificate,
+        dilopma
     })
     await newEmployee.save()
     return res.status(200).json({success: true, message: "employee created"})
@@ -63,7 +72,8 @@ const addEmployee = async (req, res) => {
 const getEmployees = async (req, res) => {
     try{
         const {id} = req.params;
-        const employees = await Employee.find().populate('userId', {password: 0}).populate("department")
+        // const employees = await Employee.find().populate('userId', {password: 0}).populate("department")
+        const employees = await Employee.find().populate('userId', {password: 0}).populate("department").populate("oldDepartment")
         return res.status(200).json({success: true, employees})
     }catch(error){
         return res.status(500).json({success: false, error: "get employees server error"})
@@ -74,9 +84,10 @@ const getEmployee = async (req, res) => {
     const {id} = req.params;
     try{
         let employee;
-        employee = await Employee.findById({_id: id}).populate('userId', {password: 0}).populate("department")
+        // employee = await Employee.findById({_id: id}).populate('userId', {password: 0}).populate("department")
+        employee = await Employee.findById({_id: id}).populate('userId', {password: 0}).populate("department").populate("oldDepartment")
         if(!employee){
-            employee = await Employee.findOne({userId: id}).populate('userId', {password: 0}).populate("department")
+            employee = await Employee.findOne({userId: id}).populate('userId', {password: 0}).populate("department").populate("oldDepartment")
         }
 
         return res.status(200).json({success: true, employee})
@@ -97,14 +108,31 @@ const updateEmployee = async(req, res) => {
         }
         const user = await User.findById({_id: employee.userId})
 
-        if(!employee){
+        if(!user){
             return res.status(404).json({success: false, error: "User not found"})
         }
         const updateUser = await User.findByIdAndUpdate({_id: employee.userId}, {name})
-        const updateEmployee = await Employee.findByIdAndUpdate({_id: id}, {
-            maritalStatus, 
-            designation, salary, department, address, employeeId
-        })
+        // const updateEmployee = await Employee.findByIdAndUpdate({_id: id}, {
+            const updateData = {
+                maritalStatus,
+            designation,
+            salary,
+            address,
+            employeeId,
+            skill,
+            education,
+            certificate,
+            dilopma
+        }
+        if(department && mongoose.Types.ObjectId.isValid(department)){
+            if(employee.department.toString() !== department){
+                updateData.oldDepartment = employee.department
+            }
+            updateData.department = new mongoose.Types.ObjectId(department)
+        }
+        const updateEmployee = await Employee.findByIdAndUpdate({_id: id}, updateData)
+            // }
+            
 
         if(!updateEmployee || !updateUser){
             return res.status(404).json({success: false, error: "document not found"})
@@ -126,6 +154,7 @@ const updateEmployee = async(req, res) => {
             return res.status(500).json({success: false, error: "get employeesByDepId server error"})
         }
     }
+
 
     const deleteEmployee = async (req, res) => {
         try{
