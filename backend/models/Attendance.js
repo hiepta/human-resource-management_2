@@ -6,7 +6,11 @@ const attendanceSchema = new Schema({
     date: { type: Date, required: true },
     checkIn: { type: Date },
     checkOut: { type: Date },
-    status: { type: String, enum: ["Present", "Absent"], default: "Absent" },
+    status: {
+        type: String,
+        enum: ["Present", "Late", "Absent"],
+        default: "Absent"
+    },
     isCompleted: { type: Boolean, default: false },
 });
 
