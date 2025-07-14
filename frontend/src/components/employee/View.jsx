@@ -75,14 +75,11 @@ const View = () => {
 
                 <div className='flex space-x-3 mb-5'>
                     <p className='text-lg font-bold text-black'>Phòng ban: </p>
-                    <p className='font-medium text-black'>{employee.department.dep_name} </p>
-                    {employee.oldDepartment && employee.oldDepartment._id !== employee.department._id ? (
-                        <p className='font-medium text-black'>
-                            {employee.oldDepartment.dep_name} / {employee.department.dep_name}
-                        </p>
-                    ) : (
-                        <p className='font-medium text-black'>{employee.department.dep_name}</p>
-                    )}
+                    <p className='font-medium text-black'>
+                        {employee.oldDepartment && employee.department && employee.oldDepartment._id !== employee.department._id
+                            ? `${employee.oldDepartment.dep_name} / ${employee.department.dep_name}`
+                            : employee.department.dep_name}
+                    </p>
                 </div>
 
                 <div className='flex space-x-3 mb-5'>

@@ -149,6 +149,9 @@ const updateEmployee = async(req, res) => {
         const {id} = req.params;
         try{
             const employees = await Employee.find({department: id})
+            .populate('userId', { password: 0 })
+                .populate('department')
+                .populate('oldDepartment')
             return res.status(200).json({success: true, employees})
         }catch(error){
             return res.status(500).json({success: false, error: "get employeesByDepId server error"})

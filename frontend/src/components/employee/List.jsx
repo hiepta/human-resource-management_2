@@ -16,21 +16,27 @@ const List = () => {
   }
 
   const fetchEmployees = async () => {
-      setEmpLoading(true)
-      try {
-        const response = await axios.get('http://localhost:5000/api/employee',{
-          headers: {
-            "Authorization" : `Bearer ${localStorage.getItem('token')}`
-          }
-        })
-        if(response.data.success){
-          // let sno = 1;
-          // console.log(response.data)
-            const data = response.data.employees.filter(emp => emp.userId).map((emp, index) => (
-              {
+    setEmpLoading(true)
+    try {
+      const response = await axios.get('http://localhost:5000/api/employee',{
+        headers: {
+          "Authorization" : `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      if(response.data.success){
+        // let sno = 1;
+        // console.log(response.data)
+          const data = response.data.employees
+            .filter(emp => emp.userId)
+            .map((emp, index) => {
+              const depName = emp.department ? emp.department.dep_name : "";
+              const oldDepName = emp.oldDepartment ? emp.oldDepartment.dep_name : "";
+              const showHistory = emp.oldDepartment && emp.department && emp.oldDepartment._id !== emp.department._id;
+              const displayDep = showHistory ? `${oldDepName} / ${depName}` : depName;
+              return {
                 _id: emp._id,
-                sno: index+1,
-                dep_name: emp.department ? emp.department.dep_name : "",
+                sno: index + 1,
+                dep_name: displayDep,
                 name: emp.userId?.name || "",
                 dob: emp.dob ? new Date(emp.dob).toLocaleDateString() : "",
                 profileImage: (
@@ -41,23 +47,23 @@ const List = () => {
                     alt={emp.userId.name}
                   />
                 ),
-                 action: <EmployeeButtons Id={emp._id} onEmployeeDelete={onEmployeeDelete}/>,
-              }
-            ))
-            
-            setEmployees(data);
-            setFilteredEmployees(data)
-        }
-      }catch(error){
-        if(error.response && !error.response.data.success){
-          alert(error.response.data.error)
-        }
-      }finally {
-        setEmpLoading(false)
+                action: <EmployeeButtons Id={emp._id} onEmployeeDelete={onEmployeeDelete}/>,
+              };
+            });
+          
+          setEmployees(data);
+          setFilteredEmployees(data)
       }
+    }catch(error){
+      if(error.response && !error.response.data.success){
+        alert(error.response.data.error)
+      }
+    }finally {
+      setEmpLoading(false)
     }
-  useEffect(() => {
-    fetchEmployees();
+  }
+useEffect(() => {
+  fetchEmployees();
 }, [])
 
   const handleFilter = (e) => {
@@ -84,3 +90,7 @@ const List = () => {
 }
 
 export default List
+
+
+
+
