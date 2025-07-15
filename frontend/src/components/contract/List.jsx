@@ -61,7 +61,8 @@ const List = () => {
                                 <th className='px-6 py-3'>Ngày kết thúc</th>
                                 <th className='px-6 py-3'>Lần ký</th>
                                 <th className='px-6 py-3'>Hệ số lương</th>
-                                <th className='px-6 py-3'>Thời hạn</th>
+                                <th className='px-6 py-3'>Thời gian (ngày)</th>
+                                <th className='px-6 py-3'>Loại hợp đồng</th>
                                 <th className='px-6 py-3'>Hành động</th>
 
                             </tr>
@@ -75,6 +76,7 @@ const List = () => {
                                     <td className='px-6 py-3'>{new Date(contract.endDate).toLocaleDateString()}</td>
                                     <td className='px-6 py-3'>{contract.signTimes}</td>
                                     <td className='px-6 py-3'>{contract.salaryCoefficient}</td>
+                                    <td className='px-6 py-3'>{contract.duration}</td>
                                     <td className='px-6 py-3'>{contract.term}</td>
                                     <td className='px-6 py-3 space-x-2'>
                                         <Link

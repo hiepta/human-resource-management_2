@@ -9,8 +9,9 @@ const Add = () => {
         startDate: '',
         endDate: '',
         signDate: '',
-        signTimes: '',
+        signTimes: 1,
         salaryCoefficient: '',
+        duration: '',
         term: ''
     })
     const [employees, setEmployees] = useState(null)
@@ -25,8 +26,21 @@ const Add = () => {
     }, [])
 
     const handleChange = (e) => {
-        const {name, value} = e.target
-        setContract(prev => ({...prev, [name]: value}))
+        const { name, value } = e.target
+        setContract(prev => {
+            const updated = { ...prev, [name]: value }
+            if (name === 'startDate' || name === 'endDate') {
+                const { startDate, endDate } = { ...updated }
+                if (startDate && endDate) {
+                    const start = new Date(startDate)
+                    const end = new Date(endDate)
+                    const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24))
+                    updated.duration = diffDays
+                    updated.term = diffDays <= 90 ? 'Thực tập sinh' : 'Nhân viên'
+                }
+            }
+            return updated
+        })
     }
 
     const handleSubmit = async (e) => {
@@ -38,6 +52,9 @@ const Add = () => {
                 }
             })
             if(response.data.success){
+                if(Number(contract.signTimes) >= 2){
+                    alert('Nhân viên đã trở thành nhân viên chính thức')
+                }
                 navigate('/admin-dashboard/contracts')
             }
         }catch(error){
@@ -78,7 +95,7 @@ const Add = () => {
                     </div>
                     <div>
                         <label className='block text-sm font-medium text-gray-700'>Lần ký</label>
-                        <input type='number' name='signTimes' onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md' required/>
+                        <input type='number' name='signTimes' value={contract.signTimes} readOnly className='mt-1 p-2 block w-full border border-gray-300 rounded-md bg-gray-100 text-black'/>
                     </div>
                 </div>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
@@ -86,9 +103,16 @@ const Add = () => {
                         <label className='block text-sm font-medium text-gray-700'>Hệ số lương</label>
                         <input type='number' name='salaryCoefficient' onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md' required/>
                     </div>
+
                     <div>
-                        <label className='block text-sm font-medium text-gray-700'>Thời hạn</label>
-                        <input type='text' name='term' onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md' required/>
+                        <label className='block text-sm font-medium text-gray-700'>Thời gian (ngày)</label>
+                        <input type='number' name='duration' value={contract.duration} readOnly className='mt-1 p-2 block w-full border border-gray-300 rounded-md bg-gray-100 text-black'/>
+                    </div>
+                </div>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-4'>
+                    <div>
+                        <label className='block text-sm font-medium text-gray-700'>Loại hợp đồng</label>
+                        <input type='text' name='term' value={contract.term} readOnly className='mt-1 p-2 block w-full border border-gray-300 rounded-md bg-gray-100 text-black'/>
                     </div>
                 </div>
                 <button type='submit' className='w-full mt-6 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded'>

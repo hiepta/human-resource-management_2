@@ -20,15 +20,28 @@ const Add = () => {
   useEffect(() => {
     const fetchEmployees = async () => {
       const emps = await fetchAllEmployees();
-      setEmployees(emps);
-      const empId = searchParams.get('employee');
-      if (empId) {
-        const selected = emps.find(emp => emp._id === empId);
-        setForm(prev => ({
-          ...prev,
-          employeeId: empId,
-          monthlyAmount: selected ? (selected.salary * 0.245).toFixed(0) : 0
-        }));
+      try {
+        const resp = await axios.get('http://localhost:5000/api/social-insurance', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        if (resp.data.success) {
+          const usedIds = resp.data.records.map(r => typeof r.employeeId === 'object' ? r.employeeId._id : r.employeeId);
+          const available = emps.filter(emp => !usedIds.includes(emp._id));
+          setEmployees(available);
+          const empId = searchParams.get('employee');
+          if (empId && available.find(e => e._id === empId)) {
+            const selected = available.find(emp => emp._id === empId);
+            setForm(prev => ({
+              ...prev,
+              employeeId: empId,
+              monthlyAmount: selected ? (selected.salary * 0.245).toFixed(0) : 0
+            }));
+          }
+        } else {
+          setEmployees(emps);
+        }
+      } catch (error) {
+        setEmployees(emps);
       }
     };
     fetchEmployees();

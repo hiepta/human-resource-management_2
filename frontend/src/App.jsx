@@ -35,6 +35,7 @@ import AttendancePage from './components/EmployeeDashboard/Attendance'
 import EmployeeInsuranceList from './components/socialInsurance/EmployeeList'
 import RewardList from './components/reward/List'
 import EmployeeReward from './components/reward/Employee'
+import Seniority from './components/seniority/Seniority'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -75,6 +76,7 @@ function App() {
           <Route path='/admin-dashboard/attendance' element={<AttendanceList/>}></Route>
           <Route path='/admin-dashboard/reward-discipline' element={<RewardList/>}></Route>
           <Route path='/admin-dashboard/setting' element={<Setting/>}></Route>
+          <Route path="/admin-dashboard/seniority/:id" element={<Seniority/>}></Route>
 
         </Route>
         <Route path='/employee-dashboard' element={
@@ -94,6 +96,7 @@ function App() {
           <Route path='/employee-dashboard/contracts/:id' element={<ContractView/>}></Route>
           <Route path='/employee-dashboard/reward-discipline/:id' element={<EmployeeReward/>}></Route>
           <Route path='/employee-dashboard/setting' element={<Setting/>}></Route>
+          <Route path='/employee-dashboard/seniority/:id' element={<Seniority/>}></Route>
 
           </Route>
       </Routes>

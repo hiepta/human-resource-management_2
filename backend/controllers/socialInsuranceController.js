@@ -8,6 +8,11 @@ const addSocialInsurance = async (req, res) => {
         if (!employee) {
             return res.status(404).json({ success: false, error: 'Employee not found' });
         }
+
+        const existed = await SocialInsurance.findOne({ employeeId });
+        if (existed) {
+            return res.status(400).json({ success: false, error: 'Employee already has a social insurance record. Please delete the existing record before adding a new one.' });
+        }
         const newRecord = new SocialInsurance({
             employeeId,
             socialInsuranceNumber,
