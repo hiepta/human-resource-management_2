@@ -17,6 +17,7 @@ import Add from './components/employee/Add'
 import View from './components/employee/View'
 import Edit from './components/employee/Edit'
 // import CalculateSalary from "./components/salary/Calculate"
+import CalculateSalary from './components/salary/Calculate'
 import Summary from "./components/EmployeeDashboard/Summary"
 import LeaveList from './components/leave/List'
 import AddLeave from './components/leave/Add'
@@ -64,6 +65,7 @@ function App() {
           <Route path="/admin-dashboard/employees/:id" element={<View/>}></Route>
           <Route path="/admin-dashboard/employees/edit/:id" element={<Edit/>}></Route>
           {/* <Route path="/admin-dashboard/salary/calculate/:id" element={<CalculateSalary/>}></Route> */}
+          <Route path="/admin-dashboard/salary/:id" element={<CalculateSalary/>}></Route>
           <Route path="/admin-dashboard/contracts" element={<ContractList/>}></Route>
           <Route path="/admin-dashboard/contracts/add" element={<AddContract/>}></Route>
           <Route path="/admin-dashboard/contracts/edit/:id" element={<EditContract/>}></Route>
@@ -91,6 +93,7 @@ function App() {
           <Route path='/employee-dashboard/leaves/:id' element={<LeaveList/>}></Route>
           <Route path='/employee-dashboard/add-leave' element={<AddLeave/>}></Route>
           {/* <Route path='/employee-dashboard/salary/calculate/:id' element={<CalculateSalary/>}></Route> */}
+          <Route path='/employee-dashboard/salary/:id' element={<CalculateSalary/>}></Route>
           <Route path='/employee-dashboard/social-insurance/:id' element={<EmployeeInsuranceList/>}></Route>
           <Route path='/employee-dashboard/attendance' element={<AttendancePage/>}></Route>
           <Route path='/employee-dashboard/contracts/:id' element={<ContractView/>}></Route>
