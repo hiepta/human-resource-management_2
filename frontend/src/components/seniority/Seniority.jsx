@@ -36,9 +36,9 @@ const Seniority = () => {
 
   return (
     <div className='p-6'>
-      <h3 className='text-2xl font-bold text-black mb-4'>Seniority</h3>
-      <p className='text-black'>Next signing salary: {info.nextSigningSalary}</p>
-      <p className='text-black'>Years until retirement: {info.yearsUntilRetirement}</p>
+      <h3 className='text-2xl font-bold text-black mb-4'>Thâm niên</h3>
+      <p className='text-black'>Lương cơ bản: {info.nextSigningSalary}</p>
+      <p className='text-black'>Bạn còn: {info.yearsUntilRetirement} năm nghỉ hưu</p>
     </div>
   )
 }
