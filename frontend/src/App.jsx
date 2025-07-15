@@ -37,7 +37,7 @@ import EmployeeInsuranceList from './components/socialInsurance/EmployeeList'
 import RewardList from './components/reward/List'
 import EmployeeReward from './components/reward/Employee'
 import Seniority from './components/seniority/Seniority'
-
+import SalaryList from './components/salary/List'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -66,6 +66,7 @@ function App() {
           <Route path="/admin-dashboard/employees/edit/:id" element={<Edit/>}></Route>
           {/* <Route path="/admin-dashboard/salary/calculate/:id" element={<CalculateSalary/>}></Route> */}
           <Route path="/admin-dashboard/salary/:id" element={<CalculateSalary/>}></Route>
+          <Route path="/admin-dashboard/salaries" element={<SalaryList/>}></Route>
           <Route path="/admin-dashboard/contracts" element={<ContractList/>}></Route>
           <Route path="/admin-dashboard/contracts/add" element={<AddContract/>}></Route>
           <Route path="/admin-dashboard/contracts/edit/:id" element={<EditContract/>}></Route>

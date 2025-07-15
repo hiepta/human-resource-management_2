@@ -12,9 +12,17 @@ const CalculateSalary = () => {
     if (loading || !user?.role) return;
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/salary/${id}/${user.role}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-        });
+        // const res = await axios.get(`http://localhost:5000/api/salary/${id}/${user.role}`, {
+        //   headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        // });
+        const now = new Date();
+        const query = `?month=${now.getMonth() + 1}&year=${now.getFullYear()}`;
+        const res = await axios.get(
+          `http://localhost:5000/api/salary/${id}/${user.role}${query}`,
+          {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          }
+        );
         if (res.data.success) {
           setData(res.data);
         }

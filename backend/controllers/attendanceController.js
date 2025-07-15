@@ -152,7 +152,7 @@ const getRewardDiscipline = async (req, res) => {
             // const count = countMap[emp._id.toString()] || 0;
             // const isReward = count > 3;
             const { present = 0, late = 0 } = statMap[emp._id.toString()] || {};
-            const reward = present > 3 ? 300000 : 0;
+            const reward = present >= 3 ? 300000 : 0;
             const fine = late > 0 ? 100000 : 0;
             return {
                 employeeId: emp.employeeId,
