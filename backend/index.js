@@ -14,6 +14,7 @@ import attendanceRouter from './routes/attendance.js'
 import chatbotRouter from './routes/chatbot.js'
 import dotenv from 'dotenv'
 import seniorityRouter from './routes/seniority.js'
+import scheduleRouter from './routes/schedule.js'
 dotenv.config();
 connectToDatabase()
 const app = express()
@@ -32,6 +33,7 @@ app.use('/api/dashboard', dashboardRouter)
 app.use('/api/attendance', attendanceRouter)
 app.use('/api/chatbot', chatbotRouter)
 app.use('/api/seniority', seniorityRouter)
+app.use('/api/schedule', scheduleRouter)
 app.listen(process.env.PORT, () => {
     console.log(`Server is Running on port ${process.env.PORT}`)
 })

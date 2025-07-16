@@ -1,6 +1,6 @@
 import React from 'react'
 import {NavLink} from 'react-router-dom'
-import { FaTachometerAlt, FaUsers, FaBuilding, FaCogs,FaMoneyBillWave,FaCalendarAlt, FaFileContract,  FaClock } from 'react-icons/fa'
+import { FaTachometerAlt,FaClipboardList, FaUsers, FaBuilding, FaCogs,FaMoneyBillWave,FaCalendarAlt, FaFileContract,  FaClock } from 'react-icons/fa'
 const AdminSidesBar = () => {
   return (
     <div className='bg-gray-800 text-white h-screen fixed left-0 top-0 bottom-0 space-y-2 w-64'>
@@ -33,11 +33,6 @@ const AdminSidesBar = () => {
             <span>Chấm công</span>
         </NavLink>
 
-        {/* <NavLink to="/admin-dashboard/salary/add" className={({isActive}) => `${isActive ? "bg-teal-500 " : " "}flex items-center space-x-4 block py-2.5 px-4 rounded`}>
-            <FaMoneyBillWave/>
-            <span>Lương</span>
-        </NavLink> */}
-
         <NavLink to="/admin-dashboard/social-insurance" className={({isActive}) => `${isActive ? "bg-teal-500 " : " "}flex items-center space-x-4 block py-2.5 px-4 rounded`}>
             <FaMoneyBillWave/>
             <span>Bảo hiểm</span>
@@ -52,6 +47,12 @@ const AdminSidesBar = () => {
             <FaFileContract/>
             <span>Hợp đồng</span>
         </NavLink>
+
+        <NavLink to="/admin-dashboard/schedules" className={({isActive}) => `${isActive ? "bg-teal-500 " : " "}flex items-center space-x-4 block py-2.5 px-4 rounded`}>
+            <FaClipboardList/>
+            <span>Lịch dạy</span>
+        </NavLink>
+
 
         <NavLink to="/admin-dashboard/salaries" className={({isActive}) => `${isActive ? "bg-teal-500 " : " "}flex items-center space-x-4 block py-2.5 px-4 rounded`}>
             <FaMoneyBillWave/>

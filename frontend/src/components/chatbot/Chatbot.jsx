@@ -85,6 +85,27 @@ const Chatbot = ({ userId }) => {
       return
     }
 
+    if (lower.includes('luong') || lower.includes('salary')) {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/chatbot/salary/${userId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        })
+        if (res.data.success) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              sender: 'bot',
+              text: `Lương tháng này của bạn là ${res.data.salary}. Hãy đi làm chăm chỉ để được thưởng nhé!!!.`
+            }
+          ])
+          return
+        }
+      } catch (err) {}
+      setMessages((prev) => [...prev, { sender: 'bot', text: 'Không thể lấy thông tin lương.' }])
+      return
+    }
+
+
     if (lower.includes('day') && lower.includes('off')) {
       try {
         const res = await axios.get(`http://localhost:5000/api/chatbot/days-off-left/${userId}`, {

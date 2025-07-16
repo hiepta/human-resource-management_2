@@ -34,7 +34,7 @@ const AdminSummary = () => {
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 text-black'>
             <SummaryCard icon={<FaUsers/>} text="Nhân viên" number={summary.totalEmployees} color="bg-teal-600"/>
             <SummaryCard icon={<FaBuilding/>} text="Phòng ban" number={summary.totalDepartments} color="bg-yellow-600"/>
-            <SummaryCard icon={<FaMoneyBillWave/>} text="Lương" number={summary.totalSalary} color="bg-red-600"/>
+            <SummaryCard icon={<FaMoneyBillWave/>} text="Lương nhân viên" number={summary.totalSalaryReceived} color="bg-red-600"/>
         </div>
 
         <div className='mt-12'>

@@ -6,11 +6,25 @@ const markAbsenteesForToday = async () => {
     const minutes = now.getHours() * 60 + now.getMinutes();
     if (minutes <= 12 * 60) return;
     const dateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const employees = await Employee.find();
+    // const employees = await Employee.find();
+    const employees = await Employee.find()
+        .populate('userId', 'name')
+        .populate('department', 'dep_name');
     for (const emp of employees) {
         const existing = await Attendance.findOne({ employeeId: emp._id, date: dateOnly });
         if (!existing) {
-            await new Attendance({ employeeId: emp._id, date: dateOnly, status: 'Absent', isCompleted: true }).save();
+            // await new Attendance({ employeeId: emp._id, date: dateOnly, status: 'Absent', isCompleted: true }).save();
+            await new Attendance({
+                employeeId: emp._id,
+                employeeSnapshot: {
+                    employeeId: emp.employeeId,
+                    name: emp.userId?.name || '',
+                    department: emp.department?.dep_name || '',
+                },
+                date: dateOnly,
+                status: 'Absent',
+                isCompleted: true
+            }).save();
         }
     }
 };
@@ -18,7 +32,10 @@ const markAbsenteesForToday = async () => {
 const checkIn = async (req, res) => {
     try {
         const { userId } = req.body;
-        const employee = await Employee.findOne({ userId });
+        // const employee = await Employee.findOne({ userId });
+        const employee = await Employee.findOne({ userId })
+            .populate('userId', 'name')
+            .populate('department', 'dep_name');
         if (!employee) {
             return res.status(404).json({ success: false, error: "Employee not found" });
         }
@@ -33,7 +50,17 @@ const checkIn = async (req, res) => {
         } else if (minutes > 12 * 60) {
             const existing = await Attendance.findOne({ employeeId: employee._id, date: dateOnly });
             if (!existing) {
-                await new Attendance({ employeeId: employee._id, date: dateOnly, status: "Absent", isCompleted: true }).save();
+                await new Attendance({
+                    employeeId: employee._id,
+                    employeeSnapshot: {
+                        employeeId: employee.employeeId,
+                        name: employee.userId?.name || '',
+                        department: employee.department?.dep_name || '',
+                    },
+                    date: dateOnly,
+                    status: "Absent",
+                    isCompleted: true
+                }).save();
             }
             return res.status(400).json({ success: false, error: "Cannot check in after 12pm" });
         }
@@ -42,6 +69,11 @@ const checkIn = async (req, res) => {
         if (!attendance) {
             attendance = new Attendance({
                 employeeId: employee._id,
+                employeeSnapshot: {
+                    employeeId: employee.employeeId,
+                    name: employee.userId?.name || '',
+                    department: employee.department?.dep_name || '',
+                },
                 date: dateOnly,
                 checkIn: today,
                 status,
@@ -102,7 +134,9 @@ const getAttendances = async (req, res) => {
 const getTodayAttendance = async (req, res) => {
     try {
         const { userId } = req.params;
-        const employee = await Employee.findOne({ userId });
+        const employee = await Employee.findOne({ userId })
+            .populate('userId', 'name')
+            .populate('department', 'dep_name');
         if (!employee) {
             return res.status(404).json({ success: false, error: "Employee not found" });
         }
@@ -112,7 +146,17 @@ const getTodayAttendance = async (req, res) => {
         let attendance = await Attendance.findOne({ employeeId: employee._id, date: dateOnly });
         const minutes = today.getHours() * 60 + today.getMinutes();
         if (!attendance && minutes > 12 * 60) {
-            attendance = new Attendance({ employeeId: employee._id, date: dateOnly, status: "Absent", isCompleted: true });
+            attendance = new Attendance({
+                employeeId: employee._id,
+                employeeSnapshot: {
+                    employeeId: employee.employeeId,
+                    name: employee.userId?.name || '',
+                    department: employee.department?.dep_name || '',
+                },
+                date: dateOnly,
+                status: "Absent",
+                isCompleted: true
+            });
             await attendance.save();
         }
         return res.status(200).json({ success: true, attendance });
@@ -206,7 +250,7 @@ const getEmployeeRewardDiscipline = async (req, res) => {
         ]);
 
         const { present = 0, late = 0 } = stats[0] || {};
-        const reward = present > 3 ? 300000 : 0;
+        const reward = present >= 3 ? 300000 : 0;
         const fine = late > 0 ? 100000 : 0;
 
         return res.status(200).json({ success: true, record: { presentDays: present, lateDays: late, reward, fine } });

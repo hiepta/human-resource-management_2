@@ -1,6 +1,6 @@
 import React from 'react'
 import {NavLink} from 'react-router-dom'
-import { FaTachometerAlt, FaUsers, FaBuilding, FaCogs,FaMoneyBillWave,FaCalendarAlt, FaClock,  FaFileContract } from 'react-icons/fa'
+import { FaTachometerAlt, FaUsers, FaBuilding, FaCogs,FaMoneyBillWave,FaClipboardList, FaCalendarAlt, FaClock, FaHourglassHalf, FaFileContract } from 'react-icons/fa'
 import { useAuth } from '../../context/authContext'
 
 
@@ -48,6 +48,16 @@ const Sidebar = () => {
             <FaFileContract/>
             <span>Hợp đồng</span>
         </NavLink>
+        
+        <NavLink to='/employee-dashboard/schedule' className={({isActive}) => `${isActive ? "bg-teal-500 " : " "}flex items-center space-x-4 block text-white py-2.5 px-4 rounded`}>
+            <FaClipboardList/>
+            <span>Lịch dạy</span>
+        </NavLink>
+
+        <NavLink to={`/employee-dashboard/seniority/${user._id}`} className={({isActive}) => `${isActive ? "bg-teal-500 " : " "}flex items-center space-x-4 block text-white py-2.5 px-4 rounded`}>
+            <FaHourglassHalf/>
+            <span>Thâm niên</span>
+        </NavLink>  
 
         <NavLink to={`/employee-dashboard/reward-discipline/${user._id}`} className={({isActive}) => `${isActive ? "bg-teal-500 " : " "}flex items-center space-x-4 block text-white py-2.5 px-4 rounded`}>
             <FaMoneyBillWave/>

@@ -2,7 +2,7 @@ import Employee from '../models/Employee.js'
 import Leave from '../models/Leave.js'
 import SocialInsurance from '../models/SocialInsurance.js'
 import Contract from '../models/Contract.js'
-
+import Attendance from '../models/Attendance.js'
 const getDaysOffLeft = async (req, res) => {
   try {
     const { id } = req.params
@@ -89,6 +89,31 @@ const requestLeaveToday = async (req, res) => {
   }
 }
 
+const getSalaryAmount = async (req, res) => {
+  try {
+    const { id } = req.params
+    const employee = await Employee.findOne({ userId: id })
+    if (!employee) {
+      return res.status(404).json({ success: false, error: 'Employee not found' })
+    }
+    const now = new Date()
+    const start = new Date(now.getFullYear(), now.getMonth(), 1)
+    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
+    const presentDays = await Attendance.countDocuments({
+      employeeId: employee._id,
+      status: 'Present',
+      date: { $gte: start, $lte: end }
+    })
+    const baseSalary = employee.salary
+    const salaryAmount = (baseSalary / 26) * presentDays - baseSalary * 0.105
+    return res.status(200).json({ success: true, salary: Math.round(salaryAmount) })
+  } catch (error) {
+    console.log(error.message)
+    return res.status(500).json({ success: false, error: 'Server error' })
+  }
+}
+
+
 const getRetirement = async (req, res) => {
   try {
     const { id } = req.params
@@ -105,4 +130,4 @@ const getRetirement = async (req, res) => {
   }
 }
 
-export { getDaysOffLeft, getSocialInsuranceAmount, getContractDate, requestLeaveToday, getRetirement }
+export { getDaysOffLeft, getSocialInsuranceAmount, getContractDate, requestLeaveToday, getSalaryAmount, getRetirement }

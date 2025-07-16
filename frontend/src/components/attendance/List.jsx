@@ -21,9 +21,9 @@ const List = () => {
           const data = response.data.attendances.map((att) => ({
             _id: att._id,
             sno: sno++,
-            employeeId: att.employeeId?.employeeId || '',
-            name: att.employeeId?.userId?.name || '',
-            department: att.employeeId?.department?.dep_name || '',
+            employeeId: att.employeeId?.employeeId || att.employeeSnapshot?.employeeId || '',
+            name: att.employeeId?.userId?.name || att.employeeSnapshot?.name || '',
+            department: att.employeeId?.department?.dep_name || att.employeeSnapshot?.department || '',
             date: att.date ? new Date(att.date).toLocaleDateString() : '',
             status: att.status,
             completed: att.isCompleted ? 'Yes' : 'No',

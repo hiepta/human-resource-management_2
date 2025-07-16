@@ -3,6 +3,11 @@ import { Schema } from "mongoose";
 
 const attendanceSchema = new Schema({
     employeeId: { type: Schema.Types.ObjectId, ref: "Employee", required: true },
+    employeeSnapshot: {
+        employeeId: String,
+        name: String,
+        department: String,
+    },
     date: { type: Date, required: true },
     checkIn: { type: Date },
     checkOut: { type: Date },

@@ -134,7 +134,7 @@ const Add = () => {
           </form>
         </div>
       ) : (
-        <div className="text-center mt-10">Đang tải danh sách nhân viên...</div>
+        <div className="text-center mt-10 text-black">Đã thêm hết nhân viên vào bảo hiểm!!!!!</div>
       )}
     </>
   );

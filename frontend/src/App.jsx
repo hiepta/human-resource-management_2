@@ -38,6 +38,9 @@ import RewardList from './components/reward/List'
 import EmployeeReward from './components/reward/Employee'
 import Seniority from './components/seniority/Seniority'
 import SalaryList from './components/salary/List'
+import ScheduleList from './components/schedule/List'
+import AddSchedule from './components/schedule/Add'
+import EmployeeSchedule from './components/EmployeeDashboard/Schedule'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -80,7 +83,8 @@ function App() {
           <Route path='/admin-dashboard/reward-discipline' element={<RewardList/>}></Route>
           <Route path='/admin-dashboard/setting' element={<Setting/>}></Route>
           <Route path="/admin-dashboard/seniority/:id" element={<Seniority/>}></Route>
-
+          <Route path="/admin-dashboard/schedules" element={<ScheduleList/>}></Route>
+          <Route path="/admin-dashboard/schedules/add" element={<AddSchedule/>}></Route>
         </Route>
         <Route path='/employee-dashboard' element={
           <PrivateRoutes>
@@ -101,7 +105,7 @@ function App() {
           <Route path='/employee-dashboard/reward-discipline/:id' element={<EmployeeReward/>}></Route>
           <Route path='/employee-dashboard/setting' element={<Setting/>}></Route>
           <Route path='/employee-dashboard/seniority/:id' element={<Seniority/>}></Route>
-
+          <Route path='/employee-dashboard/schedule' element={<EmployeeSchedule/>}></Route>
           </Route>
       </Routes>
     </BrowserRouter>
