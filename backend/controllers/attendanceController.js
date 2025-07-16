@@ -1,37 +1,30 @@
 import Attendance from "../models/Attendance.js";
 import Employee from "../models/Employee.js";
 
-const markAbsenteesForToday = async () => {
-    const now = new Date();
-    const minutes = now.getHours() * 60 + now.getMinutes();
-    if (minutes <= 12 * 60) return;
-    const dateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    // const employees = await Employee.find();
-    const employees = await Employee.find()
-        .populate('userId', 'name')
-        .populate('department', 'dep_name');
-    for (const emp of employees) {
-        const existing = await Attendance.findOne({ employeeId: emp._id, date: dateOnly });
-        if (!existing) {
-            // await new Attendance({ employeeId: emp._id, date: dateOnly, status: 'Absent', isCompleted: true }).save();
-            await new Attendance({
-                employeeId: emp._id,
-                employeeSnapshot: {
-                    employeeId: emp.employeeId,
-                    name: emp.userId?.name || '',
-                    department: emp.department?.dep_name || '',
-                },
-                date: dateOnly,
-                status: 'Absent',
-                isCompleted: true
-            }).save();
-        }
-    }
+const TLU_LAT = 21.005425;
+const TLU_LNG = 105.836963;
+const EARTH_RADIUS = 6371000; // meters
+
+const distanceMeters = (lat1, lon1, lat2, lon2) => {
+    const toRad = deg => deg * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat/2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return EARTH_RADIUS * c;
 };
 
 const checkIn = async (req, res) => {
     try {
-        const { userId } = req.body;
+        // const { userId } = req.body;
+        const { userId, latitude, longitude } = req.body;
+        if (typeof latitude !== 'number' || typeof longitude !== 'number') {
+            return res.status(400).json({ success: false, error: 'Location required' });
+        }
+        const dist = distanceMeters(latitude, longitude, TLU_LAT, TLU_LNG);
+        if (dist > 25000) {
+            return res.status(400).json({ success: false, error: 'Bạn phải checkin ở Đại học Thủy Lợi' });
+        }
         // const employee = await Employee.findOne({ userId });
         const employee = await Employee.findOne({ userId })
             .populate('userId', 'name')
@@ -43,26 +36,10 @@ const checkIn = async (req, res) => {
         const dateOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
         const minutes = today.getHours() * 60 + today.getMinutes();
         let status = "Present";
-        if (minutes >= 8 * 60 && minutes <= 10 * 60) {
+        if (minutes >= 8 * 60 && minutes <= 23 * 60) {
             status = "Present";
-        } else if (minutes > 10 * 60 && minutes <= 12 * 60) {
+        } else if (minutes > 23 * 60) {
             status = "Late";
-        } else if (minutes > 12 * 60) {
-            const existing = await Attendance.findOne({ employeeId: employee._id, date: dateOnly });
-            if (!existing) {
-                await new Attendance({
-                    employeeId: employee._id,
-                    employeeSnapshot: {
-                        employeeId: employee.employeeId,
-                        name: employee.userId?.name || '',
-                        department: employee.department?.dep_name || '',
-                    },
-                    date: dateOnly,
-                    status: "Absent",
-                    isCompleted: true
-                }).save();
-            }
-            return res.status(400).json({ success: false, error: "Cannot check in after 12pm" });
         }
 
         let attendance = await Attendance.findOne({ employeeId: employee._id, date: dateOnly });
@@ -92,6 +69,14 @@ const checkIn = async (req, res) => {
 const checkOut = async (req, res) => {
     try {
         const { id } = req.params; // attendance record id
+        const { latitude, longitude } = req.body;
+        if (typeof latitude !== 'number' || typeof longitude !== 'number') {
+            return res.status(400).json({ success: false, error: 'Location required' });
+        }
+        const dist = distanceMeters(latitude, longitude, TLU_LAT, TLU_LNG);
+        if (dist > 25000) {
+            return res.status(400).json({ success: false, error: 'Bạn phải checkout ở Đại học Thủy lợi' });
+        }
         const attendance = await Attendance.findById(id).populate({
             path: 'employeeId',
             select: 'userId'
@@ -114,7 +99,6 @@ const checkOut = async (req, res) => {
 
 const getAttendances = async (req, res) => {
     try {
-        await markAbsenteesForToday();
         const attendances = await Attendance.find()
             .populate({
                 path: 'employeeId',
@@ -145,20 +129,7 @@ const getTodayAttendance = async (req, res) => {
         // const attendance = await Attendance.findOne({ employeeId: employee._id, date: dateOnly });
         let attendance = await Attendance.findOne({ employeeId: employee._id, date: dateOnly });
         const minutes = today.getHours() * 60 + today.getMinutes();
-        if (!attendance && minutes > 12 * 60) {
-            attendance = new Attendance({
-                employeeId: employee._id,
-                employeeSnapshot: {
-                    employeeId: employee.employeeId,
-                    name: employee.userId?.name || '',
-                    department: employee.department?.dep_name || '',
-                },
-                date: dateOnly,
-                status: "Absent",
-                isCompleted: true
-            });
-            await attendance.save();
-        }
+        
         return res.status(200).json({ success: true, attendance });
     } catch (error) {
         console.log(error.message);
