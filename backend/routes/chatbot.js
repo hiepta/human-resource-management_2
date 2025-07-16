@@ -5,7 +5,8 @@ import {
     getContractDate,
     requestLeaveToday,
     getSalaryAmount,
-    getRetirement
+    getRetirement,
+    getTeachingSchedule
   } from '../controllers/chatbotController.js'
 import authMiddleware from '../middleware/authMiddleware.js'
 
@@ -17,4 +18,5 @@ router.get('/contract-date/:id', authMiddleware, getContractDate)
 router.post('/request-leave-today', authMiddleware, requestLeaveToday)
 router.get('/retirement/:id', authMiddleware, getRetirement)
 router.get('/salary/:id', authMiddleware, getSalaryAmount)
+router.get('/schedule/:id', authMiddleware, getTeachingSchedule)
 export default router

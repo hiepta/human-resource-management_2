@@ -120,6 +120,27 @@ const Chatbot = ({ userId }) => {
       return
     }
 
+    if ((lower.includes('lich') && lower.includes('day')) || lower.includes('schedule')) {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/chatbot/schedule/${userId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        })
+        if (res.data.success) {
+          if (res.data.schedules.length > 0) {
+            const textResp = res.data.schedules
+              .map(sc => `${sc.subject} phòng ${sc.classRoom} ngày ${new Date(sc.date).toLocaleDateString()} ${sc.startTime}-${sc.endTime}`)
+              .join('\n')
+            setMessages((prev) => [...prev, { sender: 'bot', text: textResp }])
+          } else {
+            setMessages((prev) => [...prev, { sender: 'bot', text: 'Bạn không có lịch giảng dạy sắp tới.' }])
+          }
+          return
+        }
+      } catch (err) {}
+      setMessages((prev) => [...prev, { sender: 'bot', text: 'Không thể lấy lịch giảng dạy.' }])
+      return
+    }
+
     setMessages((prev) => [...prev, { sender: 'bot', text: 'Xin lỗi, tôi chưa hiểu câu hỏi.' }])
   }
   if (!open) {
