@@ -159,26 +159,43 @@ const getRewardDiscipline = async (req, res) => {
             statMap[item._id.toString()] = { present: item.present, late: item.late };
         });
 
-        const employees = await Employee.find()
+        const employees = await Employee.find({ _id: { $in: Object.keys(statMap) } })
             .populate('userId', 'name')
             .populate('department', 'dep_name');
 
-        const result = employees.map(emp => {
-            // const count = countMap[emp._id.toString()] || 0;
-            // const isReward = count > 3;
-            const { present = 0, late = 0 } = statMap[emp._id.toString()] || {};
-            const reward = present >= 3 ? 300000 : 0;
-            const fine = late > 0 ? 100000 : 0;
+            const empMap = {};
+            employees.forEach(emp => {
+                empMap[emp._id.toString()] = emp;
+            });
+    
+            const result = await Promise.all(stats.map(async item => {
+                const emp = empMap[item._id.toString()];
+                const { present = 0, late = 0 } = item;
+                const reward = present >= 3 ? 300000 : 0;
+                const fine = late > 0 ? 100000 : 0;
+                if (emp) {
+                    return {
+                    employeeId: emp.employeeId,
+                    name: emp.userId?.name || '',
+                    department: emp.department?.dep_name || '',
+                    presentDays: present,
+                    lateDays: late,
+                    reward,
+                    fine
+                };
+            }
+            const snapshotDoc = await Attendance.findOne({ employeeId: item._id }).sort({ date: -1 });
+            const snap = snapshotDoc?.employeeSnapshot || {};
             return {
-                employeeId: emp.employeeId,
-                name: emp.userId?.name || '',
-                department: emp.department?.dep_name || '',
+                employeeId: snap.employeeId || '',
+                name: snap.name || '',
+                department: snap.department || '',
                 presentDays: present,
                 lateDays: late,
                 reward,
                 fine
             };
-        });
+        }));
 
         return res.status(200).json({ success: true, data: result });
     } catch (error) {
@@ -196,8 +213,13 @@ const getEmployeeRewardDiscipline = async (req, res) => {
         } else {
             employee = await Employee.findOne({ userId: id });
         }
+        let employeeId = employee?._id;
         if (!employee) {
-            return res.status(404).json({ success: false, error: 'Employee not found' });
+            const att = await Attendance.findOne({ employeeId: id });
+            if (!att) {
+                return res.status(404).json({ success: false, error: 'Employee not found' });
+            }
+            employeeId = id;
         }
 
         const now = new Date();
@@ -207,7 +229,7 @@ const getEmployeeRewardDiscipline = async (req, res) => {
         const stats = await Attendance.aggregate([
             {
                 $match: {
-                    employeeId: employee._id,
+                    employeeId: employeeId,
                     date: { $gte: startOfMonth, $lte: endOfMonth }
                 }
             },

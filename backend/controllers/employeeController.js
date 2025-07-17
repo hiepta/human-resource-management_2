@@ -7,7 +7,15 @@ import Department from '../models/Department.js'
 import mongoose from "mongoose"
 import SocialInsurance from "../models/SocialInsurance.js"
 import Contract from "../models/Contract.js"
-
+import Attendance from "../models/Attendance.js"
+const mapDegree = (degree) => {
+    const degreeMap = {
+        bachelor: "Cử nhân",
+        master: "Thạc sĩ",
+        doctor: "Tiến sĩ",
+    };
+    return degreeMap[degree] || degree;
+};
 //Dùng để lưu file ảnh vào thư mục public/ uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -79,8 +87,17 @@ const getEmployees = async (req, res) => {
     try{
         const {id} = req.params;
         // const employees = await Employee.find().populate('userId', {password: 0}).populate("department")
-        const employees = await Employee.find().populate('userId', {password: 0}).populate("department").populate("oldDepartment")
-        return res.status(200).json({success: true, employees})
+        const employees = await Employee.find()
+            .populate('userId', { password: 0 })
+            .populate('department')
+            .populate('oldDepartment')
+            .lean()
+
+        const mapped = employees.map(emp => ({
+            ...emp,
+            degreeText: mapDegree(emp.degree),
+        }))
+        return res.status(200).json({ success: true, employees: mapped })
     }catch(error){
         return res.status(500).json({success: false, error: "get employees server error"})
     }
@@ -107,6 +124,13 @@ const getEmployee = async (req, res) => {
         if(!employee){
             employee = await Employee.findOne({userId: id}).populate('userId', {password: 0}).populate("department").populate("oldDepartment")
         }
+
+        if(employee){
+            
+            employee = employee.toObject();
+            employee.degreeText = mapDegree(employee.degree);
+        }
+
 
         return res.status(200).json({success: true, employee})
     }catch(error){
@@ -166,11 +190,17 @@ const updateEmployee = async(req, res) => {
     const fetchEmployeesByDepId = async (req, res) => {
         const {id} = req.params;
         try{
-            const employees = await Employee.find({department: id})
-            .populate('userId', { password: 0 })
+            const employees = await Employee.find({ department: id })
+                .populate('userId', { password: 0 })
                 .populate('department')
                 .populate('oldDepartment')
-            return res.status(200).json({success: true, employees})
+                .lean()
+
+                const mapped = employees.map(emp => ({
+                    ...emp,
+                    degreeText: mapDegree(emp.degree),
+                }))
+                return res.status(200).json({ success: true, employees: mapped })
         }catch(error){
             return res.status(500).json({success: false, error: "get employeesByDepId server error"})
         }
@@ -181,9 +211,18 @@ const updateEmployee = async(req, res) => {
         try{
             const {id} = req.params;
             const employee = await Employee.findById({_id: id})
+                .populate('userId', 'name')
+                .populate('department', 'dep_name')
             if(!employee){
                 return res.status(404).json({success: false, error: "employee not found"})
             }
+            await Attendance.updateMany({ employeeId: employee._id }, {
+                employeeSnapshot: {
+                    employeeId: employee.employeeId,
+                    name: employee.userId?.name || '',
+                    department: employee.department?.dep_name || ''
+                }
+            })
             await User.findByIdAndDelete(employee.userId)
             await SocialInsurance.deleteMany({ employeeId: employee._id })
             await Contract.deleteMany({ employeeId: employee._id })

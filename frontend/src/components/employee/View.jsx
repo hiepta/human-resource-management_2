@@ -3,6 +3,12 @@ import React, { useEffect, useState } from 'react'
 
 import { useParams, Link } from 'react-router-dom'
 import Chatbot from '../chatbot/Chatbot'
+
+const degreeMap = {
+    bachelor: 'Cử nhân',
+    master: 'Thạc sĩ',
+    doctor: 'Tiến sĩ',
+}
 const View = () => {
     const {id} = useParams()
     const [employee, setEmployee] = useState(null)
@@ -99,7 +105,9 @@ const View = () => {
 
                 <div className='flex space-x-3 mb-5'>
                     <p className='text-lg font-bold text-black'>Học vị: </p>
-                    <p className='font-medium text-black'>{employee.degree} </p>
+                    <p className='font-medium text-black'>
+                    {employee.degreeText || degreeMap[employee.degree] || employee.degree}
+                    </p>
                 </div>
 
                 <div className='flex space-x-3 mb-5'>
