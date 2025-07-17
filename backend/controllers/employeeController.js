@@ -23,8 +23,8 @@ const upload = multer({storage: storage})
 const addEmployee = async (req, res) => {
     try{
     const {
-        name, email, employeeId, dob, phoneNumber, address, identification, gender, maritalStatus, designation, department, salary, password, role,
-        skill,education,certificate,dilopma
+        name, email, employeeId, dob, phoneNumber, address, identification, gender, maritalStatus, academicTitle, degree, department, salary, password, role,
+        skill,certificate,dilopma
     } = req.body;
 
     // Kiểm tra nếu email đã tồn tại trong user 
@@ -42,22 +42,28 @@ const addEmployee = async (req, res) => {
         profileImage: req.file ? req.file.filename : ""
     })
     const savedUser = await newUser.save()
+    let finalEmployeeId = employeeId
+    if(!finalEmployeeId){
+        finalEmployeeId = await calculateNextEmployeeId()
+    }
     const newEmployee = new Employee({
-        userId: savedUser._id, 
-        employeeId,
+        // userId: savedUser._id, 
+        // employeeId,
+        userId: savedUser._id,
+        employeeId: finalEmployeeId,
         address,
         phoneNumber,
         identification,
         dob,
         gender,
         maritalStatus,
-        designation,
+        academicTitle,
+        degree,
         department: new mongoose.Types.ObjectId(department),
         // salary,skill,education,certificate,dilopma
         oldDepartment: new mongoose.Types.ObjectId(department),
         salary,
         skill,
-        education,
         certificate,
         dilopma
     })
@@ -80,6 +86,18 @@ const getEmployees = async (req, res) => {
     }
 }
 
+const calculateNextEmployeeId = async () => {
+    const result = await Employee.aggregate([
+        { $addFields: { numericId: { $toInt: "$employeeId" } } },
+        { $sort: { numericId: -1 } },
+        { $limit: 1 }
+    ]);
+    if (result.length && !isNaN(result[0].numericId)) {
+        return String(result[0].numericId + 1);
+    }
+    return '1';
+};
+
 const getEmployee = async (req, res) => {
     const {id} = req.params;
     try{
@@ -100,7 +118,7 @@ const updateEmployee = async(req, res) => {
     try{
         const {id} = req.params;
         const {
-            name, maritalStatus, designation, department, salary, address, employeeId,skill,education,certificate,dilopma
+            name, maritalStatus, academicTitle, degree, department, salary, address, employeeId,skill,certificate,dilopma
         } = req.body;
         const employee = await Employee.findById({_id: id})
         if(!employee){
@@ -115,15 +133,15 @@ const updateEmployee = async(req, res) => {
         // const updateEmployee = await Employee.findByIdAndUpdate({_id: id}, {
             const updateData = {
                 maritalStatus,
-            designation,
-            salary,
-            address,
-            employeeId,
-            skill,
-            education,
-            certificate,
-            dilopma
-        }
+                academicTitle,
+                degree,
+                salary,
+                address,
+                employeeId,
+                skill,
+                certificate,
+                dilopma
+            }
         if(department && mongoose.Types.ObjectId.isValid(department)){
             if(employee.department.toString() !== department){
                 updateData.oldDepartment = employee.department
@@ -175,4 +193,20 @@ const updateEmployee = async(req, res) => {
             return res.status(500).json({success: false, error: "delete employee server error"})
         }
     }
-export {addEmployee, upload, getEmployees, getEmployee, updateEmployee, fetchEmployeesByDepId, deleteEmployee}
+
+    const getNextEmployeeId = async (req, res) => {
+        try {
+            const lastEmployee = await Employee.findOne().sort({ employeeId: -1 }).select('employeeId');
+            let nextId = '1';
+            if (lastEmployee) {
+                const lastIdNum = parseInt(lastEmployee.employeeId, 10);
+                if (!isNaN(lastIdNum)) {
+                    nextId = String(lastIdNum + 1);
+                }
+            }
+            return res.status(200).json({ success: true, nextId });
+        } catch (error) {
+            return res.status(500).json({ success: false, error: 'get next employeeId server error' });
+        }
+    }    
+export {addEmployee, getNextEmployeeId, upload, getEmployees, getEmployee, updateEmployee, fetchEmployeesByDepId, deleteEmployee}

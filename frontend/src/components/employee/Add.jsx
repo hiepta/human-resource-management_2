@@ -4,7 +4,8 @@ import { fetchDepartments } from '../../utils/EmployeeHelper'
 import { useNavigate } from 'react-router-dom'
 const Add = () => {
     const [departments, setDepartments] = useState([])
-    const [formData, setFormData] = useState({})
+    // const [formData, setFormData] = useState({})
+    const [formData, setFormData] = useState({employeeId: ''})
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -13,7 +14,41 @@ const Add = () => {
         const departments = await fetchDepartments()
         setDepartments(departments)
         }
+        const getNextId = async () => {
+            try{
+                const resp = await axios.get('http://localhost:5000/api/employee/next-id', {
+                    headers: { "Authorization" : `Bearer ${localStorage.getItem('token')}` }
+                })
+                if(resp.data.success){
+                    setFormData(prev => ({...prev, employeeId: resp.data.nextId}))
+                }
+            }catch(err){
+                console.error(err)
+            }
+        }
         getDepartments()
+        getNextId()
+    }, [])
+
+    useEffect(() => {
+        const fetchNextId = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/api/employee/next-id', {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem('token')}`
+                    }
+                })
+                if (response.data.success) {
+                    setFormData(prev => ({ ...prev, employeeId: response.data.nextId }))
+                } else {
+                    setFormData(prev => ({ ...prev, employeeId: '1' }))
+                }
+            } catch (error) {
+                console.error(error)
+                setFormData(prev => ({ ...prev, employeeId: '1' }))
+            }
+        }
+        fetchNextId()
     }, [])
 
     const handleChange = (e) => {
@@ -88,7 +123,7 @@ const Add = () => {
         {/* Employee */}
             <div>
                 <label className='block text-sm font-medium text-gray-700'>Mã nhân viên</label>
-                <input type="text" onChange={handleChange} name='employeeId' placeholder='Employee ID' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'/>
+                <input type="text" readOnly onChange={handleChange} value={formData.employeeId} name='employeeId' placeholder='Employee ID' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'/>
             </div>
 
         {/* Date of birth */}
@@ -116,16 +151,23 @@ const Add = () => {
                 <option value="kĩ sư">Kĩ sư</option>
             </select>
         </div>
-
         <div>
-            <label className='block text-sm font-medium text-gray-700'>Trình độ học vấn</label>
-            <select name='education' onChange={handleChange} placeholder='Trình độ học vấn' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'>
-                <option value="">Trình độ học vấn</option>
-                <option value="đại học">Đại học</option>
-                <option value="cao đẳng">Cao đẳng</option>
+        <label className='block text-sm font-medium text-gray-700'>Học hàm</label>
+            <select name='academicTitle' onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md'>
+                <option value="">Học hàm</option>
+                <option value="PGS">PGS</option>
+                <option value="GS">GS</option>
             </select>
         </div>
-
+        <div>
+            <label className='block text-sm font-medium text-gray-700'>Học vị</label>
+            <select name='degree' onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'>
+                <option value="">Học vị</option>
+                <option value="bachelor">Cử nhân</option>
+                <option value="master">Thạc sĩ</option>
+                <option value="doctor">Tiến sĩ</option>
+            </select>
+        </div>
         <div>
             <label className='block text-sm font-medium text-gray-700'>Chứng chỉ liên quan</label>
             <input type="text" onChange={handleChange} name='certificate' placeholder='Chứng chỉ' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'/>
@@ -144,11 +186,6 @@ const Add = () => {
                 <option value="single">Độc thân</option>
                 <option value="married">Đã kết hôn</option>
             </select>
-        </div>
-
-        <div>
-            <label className='block text-sm font-medium text-gray-700'>Designation</label>
-            <input type="text" onChange={handleChange} name='designation' placeholder='Designation' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'/>
         </div>
 
         <div>

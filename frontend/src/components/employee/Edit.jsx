@@ -8,13 +8,14 @@ const Edit = () => {
     const [employee, setEmployee] = useState({
         name: '',
         maritalStatus: '',
-        designation: '',
+        
         salary: 0,
         department: '',
         oldDepartment: '',
         certificate: '',
         dilopma: '',
-        education: '',
+        academicTitle: '',
+        degree: '',
         skill: ''
     })
     const navigate = useNavigate()
@@ -42,15 +43,12 @@ const Edit = () => {
               console.log(response.data)
               if(response.data.success){
                 const employee = response.data.employee
-                // setEmployee((prev) => ({...prev, name: employee.userId.name, maritalStatus: employee.maritalStatus,
-                // designation: employee.designation, salary: employee.salary, department: employee.department ? employee.department._id : '',
-                // oldDepartment: employee.department ? employee.department._id : '',
-                // address: employee.address, employeeId: employee.employeeId,skill:employee.skill, certificate: employee.certificate, education: employee.education, dilopma:employee.dilopma
                 setEmployee((prev) => ({
                   ...prev,
                   name: employee.userId.name,
                   maritalStatus: employee.maritalStatus,
-                  designation: employee.designation,
+                  academicTitle: employee.academicTitle || '',
+                  degree: employee.degree || '',
                   salary: employee.salary,
                   department: employee.department ? employee.department._id : '',
                   oldDepartment: employee.oldDepartment ? employee.oldDepartment._id : '',
@@ -58,7 +56,6 @@ const Edit = () => {
                   employeeId: employee.employeeId,
                   skill: employee.skill,
                   certificate: employee.certificate,
-                  education: employee.education,
                   dilopma: employee.dilopma,
                 }))
               }
@@ -115,15 +112,7 @@ const Edit = () => {
             </select>
         </div>
 
-        <div>
-            <label className='block text-sm font-medium text-gray-700'>Trình độ học vấn</label>
-            <select name='education' value={employee.education} onChange={handleChange} placeholder='Trình độ học vấn' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'>
-                <option value="">Trình độ học vấn</option>
-                <option value="đại học">Đại học</option>
-                <option value="cao đẳng">Cao đẳng</option>
-            </select>
-        </div>
-
+        
         <div>
             <label className='block text-sm font-medium text-gray-700'>Chứng chỉ liên quan</label>
             <input type="text" value={employee.certificate} onChange={handleChange} name='certificate' placeholder='Chứng chỉ' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'/>
@@ -149,8 +138,22 @@ const Edit = () => {
         </div>
 
         <div>
-            <label className='block text-sm font-medium text-gray-700'>Chức danh</label>
-            <input type="text" onChange={handleChange} value={employee.designation} name='designation' placeholder='Designation' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'/>
+        <label className='block text-sm font-medium text-gray-700'>Học hàm</label>
+            <select name='academicTitle' value={employee.academicTitle} onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md'>
+                <option value="">Học hàm</option>
+                <option value="PGS">PGS</option>
+                <option value="GS">GS</option>
+            </select>
+        </div>
+
+        <div>
+            <label className='block text-sm font-medium text-gray-700'>Học vị</label>
+            <select name='degree' value={employee.degree} onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'>
+                <option value="">Học vị</option>
+                <option value="bachelor">Cử nhân</option>
+                <option value="master">Thạc sĩ</option>
+                <option value="doctor">Tiến sĩ</option>
+            </select>
         </div>
 
         <div>
