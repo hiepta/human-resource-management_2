@@ -3,6 +3,20 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { fetchAllEmployees } from '../../utils/EmployeeHelper'
 
+const calculateTerm = (days) => {
+    const months = Math.ceil(days / 30)
+    if (months >= 12) {
+        const years = Math.floor(months / 12)
+        const remainMonths = months % 12
+        let result = `${years} năm`
+        if (remainMonths) {
+            result += ` ${remainMonths} tháng`
+        }
+        return result
+    }
+    return `${months} tháng`
+}
+
 const Add = () => {
     const [contract, setContract] = useState({
         employeeId: '',
@@ -55,7 +69,7 @@ const Add = () => {
                     const end = new Date(endDate)
                     const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24))
                     updated.duration = diffDays
-                    updated.term = diffDays <= 90 ? 'Thực tập sinh' : 'Nhân viên'
+                    updated.term = calculateTerm(diffDays)
                 }
             }
             return updated

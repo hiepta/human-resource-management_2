@@ -1,6 +1,21 @@
 import Contract from "../models/Contract.js";
 import Employee from "../models/Employee.js";
 import User from "../models/User.js";
+
+const calculateTerm = (days) => {
+    const months = Math.ceil(days / 30);
+    if (months >= 12) {
+        const years = Math.floor(months / 12);
+        const remainMonths = months % 12;
+        let result = `${years} năm`;
+        if (remainMonths) {
+            result += ` ${remainMonths} tháng`;
+        }
+        return result;
+    }
+    return `${months} tháng`;
+};
+
 const addContract = async (req, res) => {
     try {
         let { employeeId, startDate, endDate, signDate, salaryCoefficient, signTimes } = req.body;
@@ -11,7 +26,7 @@ const addContract = async (req, res) => {
         const start = new Date(startDate);
         const end = new Date(endDate);
         const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-        const term = diffDays <= 90 ? 'Thực tập sinh' : 'Nhân viên';
+        const term = calculateTerm(diffDays);
         const newContract = new Contract({
             employeeId,
             startDate,
@@ -42,7 +57,12 @@ const getContracts = async (req, res) => {
         populate: {
           path: 'userId',
           select: 'name',
-        }});
+        }}).lean();
+        contracts.forEach(c => {
+            const diffDays = Math.ceil((c.endDate - c.startDate) / (1000 * 60 * 60 * 24));
+            c.duration = diffDays;
+            c.term = calculateTerm(diffDays);
+        });
         return res.status(200).json({ success: true, contracts });
     } catch (error) {
         return res.status(500).json({ success: false, error: "Contract get server error" });
@@ -57,7 +77,12 @@ const getContract = async (req, res) => {
         populate: {
           path: 'userId',
           select: 'name',
-        }});
+        }}).lean();
+        if (contract) {
+            const diffDays = Math.ceil((contract.endDate - contract.startDate) / (1000 * 60 * 60 * 24));
+            contract.duration = diffDays;
+            contract.term = calculateTerm(diffDays);
+        }
 
         return res.status(200).json({ success: true, contract });
     } catch (error) {
@@ -77,7 +102,7 @@ const updateContract = async (req, res) => {
         const start = new Date(startDate);
         const end = new Date(endDate);
         const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-        const term = diffDays <= 90 ? 'Thực tập sinh' : 'Nhân viên';
+        const term = calculateTerm(diffDays);
         const update = {
             employeeId,
             startDate,
@@ -127,14 +152,19 @@ const getContractsByRole = async (req, res) => {
             contracts = await Contract.find({ employeeId: id }).populate({
                 path: 'employeeId',
                 populate: { path: 'userId', select: 'name' }
-            });
+            }).lean();
         }else{
             const employee = await Employee.findOne({ userId: id });
             contracts = await Contract.find({ employeeId: employee._id }).populate({
                 path: 'employeeId',
                 populate: { path: 'userId', select: 'name' }
-            });
+            }).lean();
         }
+        contracts.forEach(c => {
+            const diffDays = Math.ceil((c.endDate - c.startDate) / (1000 * 60 * 60 * 24));
+            c.duration = diffDays;
+            c.term = calculateTerm(diffDays);
+        });
         return res.status(200).json({ success: true, contracts });
     } catch (error) {
         return res.status(500).json({ success: false, error: "Contract get server error" });

@@ -2,6 +2,20 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom'
 
+const calculateTerm = (days) => {
+    const months = Math.ceil(days / 30)
+    if (months >= 12) {
+        const years = Math.floor(months / 12)
+        const remainMonths = months % 12
+        let result = `${years} năm`
+        if (remainMonths) {
+            result += ` ${remainMonths} tháng`
+        }
+        return result
+    }
+    return `${months} tháng`
+}
+
 const List = () => {
     const [contracts, setContracts] = useState(null);
 
@@ -61,7 +75,7 @@ const List = () => {
                                 <th className='px-6 py-3'>Ngày kết thúc</th>
                                 <th className='px-6 py-3'>Lần ký</th>
                                 <th className='px-6 py-3'>Hệ số lương</th>
-                                <th className='px-6 py-3'>Thời gian (ngày)</th>
+                                <th className='px-6 py-3'>Thời gian</th>
                                 <th className='px-6 py-3'>Loại hợp đồng</th>
                                 <th className='px-6 py-3'>Hành động</th>
 
@@ -76,7 +90,7 @@ const List = () => {
                                     <td className='px-6 py-3'>{new Date(contract.endDate).toLocaleDateString()}</td>
                                     <td className='px-6 py-3'>{contract.signTimes}</td>
                                     <td className='px-6 py-3'>{contract.salaryCoefficient}</td>
-                                    <td className='px-6 py-3'>{contract.duration}</td>
+                                    <td className='px-6 py-3'>{calculateTerm(contract.duration)}</td>
                                     <td className='px-6 py-3'>{contract.term}</td>
                                     <td className='px-6 py-3 space-x-2'>
                                         <Link
