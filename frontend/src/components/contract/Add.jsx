@@ -25,10 +25,29 @@ const Add = () => {
         fetchEmployees()
     }, [])
 
-    const handleChange = (e) => {
+    const handleChange = async (e) => {
         const { name, value } = e.target
+        if(name === 'employeeId' && value){
+            try{
+                const resp = await axios.get(`http://localhost:5000/api/contract/next-sign/${value}`, {
+                    headers:{
+                        "Authorization" : `Bearer ${localStorage.getItem('token')}`
+                    }
+                })
+                if(resp.data.success){
+                    setContract(prev => ({...prev, employeeId: value, signTimes: resp.data.signTimes}))
+                    return
+                }
+            }catch(err){
+                console.error(err)
+            }
+        } else if(name === 'employeeId') {
+            setContract(prev => ({...prev, employeeId: '', signTimes: 1}))
+            return
+        }
         setContract(prev => {
-            const updated = { ...prev, [name]: value }
+            const updatedValue = name === 'salaryCoefficient' ? parseFloat(value) : value
+            const updated = { ...prev, [name]: updatedValue }
             if (name === 'startDate' || name === 'endDate') {
                 const { startDate, endDate } = { ...updated }
                 if (startDate && endDate) {
@@ -101,7 +120,7 @@ const Add = () => {
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                     <div>
                         <label className='block text-sm font-medium text-gray-700'>Hệ số lương</label>
-                        <input type='number' name='salaryCoefficient' onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md' required/>
+                        <input type='number' step='0.1' name='salaryCoefficient' onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md' required/>
                     </div>
 
                     <div>

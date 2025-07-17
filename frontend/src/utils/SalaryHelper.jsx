@@ -4,6 +4,6 @@ export const salaryColumns = [
     { name: 'Tên nhân viên', selector: row => row.name, width: '120px' },
     { name: 'Phòng ban', selector: row => row.department, width: '150px' },
     { name: 'Lương cơ bản', selector: row => row.baseSalary, width: '120px' },
-    { name: 'Ngày công', selector: row => row.presentDays, width: '100px' },
+    { name: 'Hệ số', selector: row => row.salaryCoefficient, width: '80px' },
     { name: 'Lương nhận', selector: row => row.salary, width: '120px' }
   ];

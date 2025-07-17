@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 const Add = () => {
     const [departments, setDepartments] = useState([])
     // const [formData, setFormData] = useState({})
-    const [formData, setFormData] = useState({employeeId: ''})
+    const [formData, setFormData] = useState({employeeId: '', salary: 2340000})
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -200,7 +200,7 @@ const Add = () => {
 
         <div>
             <label className='block text-sm font-medium text-gray-700'>Lương</label>
-            <input type="number" onChange={handleChange} name='salary' placeholder='Salary' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'/>
+            <input type="number" onChange={handleChange} name='salary' value={formData.salary} className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'/>
         </div>
 
         <div>

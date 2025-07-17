@@ -1,6 +1,6 @@
 import Attendance from "../models/Attendance.js";
 import Employee from "../models/Employee.js";
-
+import Contract from "../models/Contract.js";
 const getSalary = async (req, res) => {
   try {
     const { id, role } = req.params;
@@ -26,16 +26,26 @@ const getSalary = async (req, res) => {
       // date: { $gte: startOfMonth, $lte: endOfMonth },
       date: { $gte: start, $lte: end },
     });
-
     const baseSalary = employee.salary;
-    // const salary = (baseSalary / 26) * presentDays - baseSalary * 0.105;
-    const salaryAmount = (baseSalary / 26) * presentDays - baseSalary * 0.105;
+    const contract = await Contract.findOne({ employeeId: employee._id }).sort({ startDate: -1 });
+    const salaryCoefficient = contract ? contract.salaryCoefficient : 1;
+    const firstContract = await Contract.findOne({ employeeId: employee._id }).sort({ startDate: 1 });
+    const yearsOfSeniority = firstContract ? Math.floor((now - firstContract.startDate) / (1000 * 60 * 60 * 24 * 365)) : 0;
+
+    const salary = baseSalary * salaryCoefficient;
+    const teachingAllowance = salary * 0.25;
+    const seniorityAllowance = yearsOfSeniority >= 5 ? (yearsOfSeniority / 100) * salary : 0;
+    const socialInsurance = salary * 0.105;
+    const salaryAmount = salary + teachingAllowance + seniorityAllowance - socialInsurance;
     return res.status(200).json({
       success: true,
       baseSalary,
-      presentDays,
-      // salary: Math.round(salary),
+      salaryCoefficient,
+      teachingAllowance: Math.round(teachingAllowance),
+      seniorityAllowance: Math.round(seniorityAllowance),
+      socialInsurance: Math.round(socialInsurance),
       salary: Math.round(salaryAmount),
+      presentDays,
     });
   } catch (err) {
     console.log(err.message);
@@ -70,19 +80,31 @@ const getAllSalaries = async (req, res) => {
       .populate("userId", "name")
       .populate("department", "dep_name");
 
-    const data = employees.map((emp) => {
+      const data = [];
+      for (const emp of employees) {
       const presentDays = presentMap[emp._id.toString()] || 0;
       const baseSalary = emp.salary;
-      const amount = (baseSalary / 26) * presentDays - baseSalary * 0.105;
-      return {
+      const contract = await Contract.findOne({ employeeId: emp._id }).sort({ startDate: -1 });
+      const salaryCoefficient = contract ? contract.salaryCoefficient : 1;
+      const firstContract = await Contract.findOne({ employeeId: emp._id }).sort({ startDate: 1 });
+      const yearsOfSeniority = firstContract ? Math.floor((now - firstContract.startDate) / (1000 * 60 * 60 * 24 * 365)) : 0;
+
+      const salary = baseSalary * salaryCoefficient;
+      const teachingAllowance = salary * 0.25;
+      const seniorityAllowance = yearsOfSeniority >= 5 ? (yearsOfSeniority / 100) * salary : 0;
+      const socialInsurance = salary * 0.105;
+      const amount = salary + teachingAllowance + seniorityAllowance - socialInsurance;
+
+      data.push({
         employeeId: emp.employeeId,
         name: emp.userId?.name || "",
         department: emp.department?.dep_name || "",
         baseSalary,
+        salaryCoefficient,
         presentDays,
         salary: Math.round(amount),
-      };
-    });
+      });
+    }
 
     return res.status(200).json({ success: true, data });
   } catch (err) {

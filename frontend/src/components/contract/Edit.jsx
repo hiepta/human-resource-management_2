@@ -24,7 +24,7 @@ const Edit = () => {
                         startDate: c.startDate ? c.startDate.substr(0,10) : '',
                         endDate: c.endDate ? c.endDate.substr(0,10) : '',
                         signDate: c.signDate ? c.signDate.substr(0,10) : '',
-                        signTimes: c.signTimes + 1,
+                        signTimes: c.signTimes,
                         salaryCoefficient: c.salaryCoefficient,
                         duration: c.duration,
                         term: c.term
@@ -42,7 +42,8 @@ const Edit = () => {
     const handleChange = (e) => {
         const { name, value } = e.target
         setContract(prev => {
-            const updated = { ...prev, [name]: value }
+            const updatedValue = name === 'salaryCoefficient' ? parseFloat(value) : value
+            const updated = { ...prev, [name]: updatedValue }
             if (name === 'startDate' || name === 'endDate') {
                 const { startDate, endDate } = { ...updated }
                 if (startDate && endDate) {
@@ -109,7 +110,7 @@ const Edit = () => {
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                     <div>
                         <label className='block text-sm font-medium text-gray-700'>Hệ số lương</label>
-                        <input type='number' name='salaryCoefficient' value={contract.salaryCoefficient} onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md' required/>
+                        <input type='number' step='0.1' name='salaryCoefficient' value={contract.salaryCoefficient} onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md' required/>
                     </div>
 
                     <div>

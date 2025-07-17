@@ -9,7 +9,6 @@ const employeeSchema = new Schema({
     dob: {type: Date},
     gender: {type: String},
     dilopma: {type: String},
-    
     certificate: {type: String},
     skill: {type: String},
     maritalStatus: {type: String},
@@ -17,7 +16,7 @@ const employeeSchema = new Schema({
     degree: {type: String, enum: ["bachelor", "master", "doctor"], required: true},
     department: {type: Schema.Types.ObjectId, ref:"Department", required: true},
     oldDepartment: {type: Schema.Types.ObjectId, ref:"Department"},
-    salary: {type: Number, required: true},
+    salary: {type: Number, required: true, default: 2340000},
     createdAt: {type: Date, default: Date.now},
     updatedAt: {type: Date, default: Date.now}
 })

@@ -120,15 +120,17 @@ const getSalaryAmount = async (req, res) => {
       return res.status(404).json({ success: false, error: 'Employee not found' })
     }
     const now = new Date()
-    const start = new Date(now.getFullYear(), now.getMonth(), 1)
-    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
-    const presentDays = await Attendance.countDocuments({
-      employeeId: employee._id,
-      status: 'Present',
-      date: { $gte: start, $lte: end }
-    })
     const baseSalary = employee.salary
-    const salaryAmount = (baseSalary / 26) * presentDays - baseSalary * 0.105
+    const contract = await Contract.findOne({ employeeId: employee._id }).sort({ startDate: -1 })
+    const salaryCoefficient = contract ? contract.salaryCoefficient : 1
+    const firstContract = await Contract.findOne({ employeeId: employee._id }).sort({ startDate: 1 })
+    const yearsOfSeniority = firstContract ? Math.floor((now - firstContract.startDate) / (1000 * 60 * 60 * 24 * 365)) : 0
+
+    const salary = baseSalary * salaryCoefficient
+    const teachingAllowance = salary * 0.25
+    const seniorityAllowance = yearsOfSeniority >= 5 ? (yearsOfSeniority / 100) * salary : 0
+    const socialInsurance = salary * 0.105
+    const salaryAmount = salary + teachingAllowance + seniorityAllowance - socialInsurance
     return res.status(200).json({ success: true, salary: Math.round(salaryAmount) })
   } catch (error) {
     console.log(error.message)

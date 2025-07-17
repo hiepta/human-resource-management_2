@@ -3,20 +3,22 @@ import Employee from "../models/Employee.js";
 import User from "../models/User.js";
 const addContract = async (req, res) => {
     try {
-        const { employeeId, startDate, endDate, signDate, salaryCoefficient } = req.body;
+        let { employeeId, startDate, endDate, signDate, salaryCoefficient, signTimes } = req.body;
+        const salaryCoef = parseFloat(salaryCoefficient);
+        if(!signTimes){
+            signTimes = 1;
+        }
         const start = new Date(startDate);
         const end = new Date(endDate);
         const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
         const term = diffDays <= 90 ? 'Thực tập sinh' : 'Nhân viên';
-        const last = await Contract.findOne({ employeeId }).sort({ signTimes: -1 });
-        const signTimes = last ? last.signTimes + 1 : 1;
         const newContract = new Contract({
             employeeId,
             startDate,
             endDate,
             signDate,
             signTimes,
-            salaryCoefficient,
+            salaryCoefficient: salaryCoef,
             duration: diffDays,
             term,
         });
@@ -67,24 +69,25 @@ const getContract = async (req, res) => {
 const updateContract = async (req, res) => {
     try {
         const { id } = req.params;
-        const { employeeId, startDate, endDate, signDate, salaryCoefficient } = req.body;
+        let { employeeId, startDate, endDate, signDate, salaryCoefficient, signTimes } = req.body;
+        const salaryCoef = parseFloat(salaryCoefficient);
+        if(!signTimes){
+            signTimes = 1;
+        }
         const start = new Date(startDate);
         const end = new Date(endDate);
         const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
         const term = diffDays <= 90 ? 'Thực tập sinh' : 'Nhân viên';
-        const last = await Contract.findOne({ employeeId }).sort({ signTimes: -1 });
-        const signTimes = last ? last.signTimes + 1 : 1;
         const update = {
             employeeId,
             startDate,
             endDate,
             signDate,
             signTimes,
-            salaryCoefficient,
+            salaryCoefficient: salaryCoef,
             duration: diffDays,
             term,
             updatedAt: Date.now(),
-            signTimes
         };
         const updatedContract = await Contract.findByIdAndUpdate(id, update, { new: true });
         if (updateContract && Number(signTimes) >= 2) {
