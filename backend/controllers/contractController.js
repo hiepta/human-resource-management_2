@@ -16,13 +16,31 @@ const calculateTerm = (days) => {
     return `${months} tháng`;
 };
 
+const randomCoef = (degree) => {
+    if(degree === 'master'){
+        return parseFloat((Math.random() * (6.78 - 4.4) + 4.4).toFixed(2));
+    }
+    if(degree === 'doctor'){
+        return parseFloat((Math.random() * (8.0 - 6.2) + 6.2).toFixed(2));
+    }
+    return undefined;
+};
+
 const addContract = async (req, res) => {
     try {
         let { employeeId, startDate, endDate, signDate, salaryCoefficient, signTimes } = req.body;
-        const salaryCoef = parseFloat(salaryCoefficient);
+        let salaryCoef = parseFloat(salaryCoefficient);
         if(!signTimes){
             signTimes = 1;
         }
+        const employee = await Employee.findById(employeeId);
+        if(employee){
+            const autoCoef = randomCoef(employee.degree);
+            if(isNaN(salaryCoef) && autoCoef !== undefined){
+                salaryCoef = autoCoef;
+            }
+        }
+
         const start = new Date(startDate);
         const end = new Date(endDate);
         const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
@@ -95,9 +113,16 @@ const updateContract = async (req, res) => {
     try {
         const { id } = req.params;
         let { employeeId, startDate, endDate, signDate, salaryCoefficient, signTimes } = req.body;
-        const salaryCoef = parseFloat(salaryCoefficient);
+        let salaryCoef = parseFloat(salaryCoefficient);
         if(!signTimes){
             signTimes = 1;
+        }
+        const employee = await Employee.findById(employeeId);
+        if(employee){
+            const autoCoef = randomCoef(employee.degree);
+            if(isNaN(salaryCoef) && autoCoef !== undefined){
+                salaryCoef = autoCoef;
+            }
         }
         const start = new Date(startDate);
         const end = new Date(endDate);

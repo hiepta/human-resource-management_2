@@ -1,7 +1,8 @@
 import Employee from "../models/Employee.js"
 import Department from "../models/Department.js"
 import Leave from "../models/Leave.js";
-import Attendance from "../models/Attendance.js";
+// import Attendance from "../models/Attendance.js";
+import Contract from "../models/Contract.js";
 const getSummary = async (req, res) => {
     try{
         const totalEmployees = await Employee.countDocuments();
@@ -10,26 +11,35 @@ const getSummary = async (req, res) => {
         //     {$group: {_id: null, totalSalary: {$sum: "$salary"}}}
         // ])
         const now = new Date();
-        const start = new Date(now.getFullYear(), now.getMonth(), 1);
-        const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+        // const start = new Date(now.getFullYear(), now.getMonth(), 1);
+        // const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
 
-        const stats = await Attendance.aggregate([
-            { $match: { date: { $gte: start, $lte: end }, status: "Present" } },
-            { $group: { _id: "$employeeId", present: { $sum: 1 } } }
-        ]);
+        // const stats = await Attendance.aggregate([
+        //     { $match: { date: { $gte: start, $lte: end }, status: "Present" } },
+        //     { $group: { _id: "$employeeId", present: { $sum: 1 } } }
+        // ]);
 
-        const presentMap = {};
-        stats.forEach((s) => {
-            presentMap[s._id.toString()] = s.present;
-        });
+        // const presentMap = {};
+        // stats.forEach((s) => {
+        //     presentMap[s._id.toString()] = s.present;
+        // });
 
         const employees = await Employee.find();
         let totalSalaryReceived = 0;
-        employees.forEach(emp => {
-            const presentDays = presentMap[emp._id.toString()] || 0;
-            const amount = (emp.salary / 26) * presentDays - emp.salary * 0.105;
+        for (const emp of employees) {
+            const baseSalary = emp.salary;
+            const contract = await Contract.findOne({ employeeId: emp._id }).sort({ startDate: -1 });
+            const salaryCoefficient = contract ? contract.salaryCoefficient : 1;
+            const firstContract = await Contract.findOne({ employeeId: emp._id }).sort({ startDate: 1 });
+            const yearsOfSeniority = firstContract ? Math.floor((now - firstContract.startDate) / (1000 * 60 * 60 * 24 * 365)) : 0;
+
+            const salary = baseSalary * salaryCoefficient;
+            const teachingAllowance = salary * 0.25;
+            const seniorityAllowance = yearsOfSeniority >= 5 ? (yearsOfSeniority / 100) * salary : 0;
+            const socialInsurance = salary * 0.105;
+            const amount = salary + teachingAllowance + seniorityAllowance - socialInsurance;
             totalSalaryReceived += Math.round(amount);
-        });
+        }
         const employeeAppliedForLeave = await Leave.distinct('employeeId')
 
         const leaveStatus = await Leave.aggregate([

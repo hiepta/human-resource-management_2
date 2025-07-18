@@ -55,6 +55,22 @@ const Edit = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target
+        if(name === 'employeeId' && value){
+            const selected = employees.find(emp => emp._id === value)
+            let coef = contract.salaryCoefficient
+            if(selected){
+                if(selected.degree === 'master'){
+                    coef = (Math.random() * (6.78 - 4.4) + 4.4).toFixed(2)
+                }else if(selected.degree === 'doctor'){
+                    coef = (Math.random() * (8.0 - 6.2) + 6.2).toFixed(2)
+                }
+            }
+            setContract(prev => ({...prev, employeeId: value, salaryCoefficient: parseFloat(coef)}))
+            return
+        }else if(name === 'employeeId'){
+            setContract(prev => ({...prev, employeeId: '', salaryCoefficient: ''}))
+            return
+        }
         setContract(prev => {
             const updatedValue = name === 'salaryCoefficient' ? parseFloat(value) : value
             const updated = { ...prev, [name]: updatedValue }
@@ -119,13 +135,13 @@ const Edit = () => {
                     </div>
                     <div>
                         <label className='block text-sm font-medium text-gray-700'>Lần ký</label>
-                        <input type='number' name='signTimes' value={contract.signTimes} readOnly className='mt-1 p-2 block w-full border border-gray-300 rounded-md bg-gray-100 text-black'/>                    </div>
+                        <input type='number' name='signTimes' value={contract.signTimes} readOnly className='mt-1 p-2 block w-full border border-gray-300 rounded-md bg-gray-100 text-black'/>    
+                    </div>
                 </div>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                     <div>
                         <label className='block text-sm font-medium text-gray-700'>Hệ số lương</label>
-                        <input type='number' step='0.1' name='salaryCoefficient' value={contract.salaryCoefficient} onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md' required/>
-                    </div>
+                        <input type='number' step='0.1' name='salaryCoefficient' value={contract.salaryCoefficient} onChange={handleChange} readOnly className='mt-1 p-2 block w-full border border-gray-300 rounded-md bg-gray-100 text-black' required/>                    </div>
 
                     <div>
                         <label className='block text-sm font-medium text-gray-700'>Thời gian (ngày)</label>
