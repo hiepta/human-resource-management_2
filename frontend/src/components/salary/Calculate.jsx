@@ -27,7 +27,7 @@ const CalculateSalary = () => {
         if (error.response) {
           alert(error.response.data.error);
         }
-      }
+    }
     };
     fetchData();
   }, [id, user, loading]);

@@ -1,6 +1,7 @@
 import Attendance from "../models/Attendance.js";
 import Employee from "../models/Employee.js";
 import Contract from "../models/Contract.js";
+
 const getSalary = async (req, res) => {
   try {
     const { id, role } = req.params;
