@@ -32,7 +32,7 @@ const addEmployee = async (req, res) => {
     try{
     const {
         name, email, employeeId, dob, phoneNumber, address, identification, gender, maritalStatus, academicTitle, degree, department, salary, password, role,
-        skill,certificate,dilopma
+        skill,certificate
     } = req.body;
 
     // Kiểm tra nếu email đã tồn tại trong user 
@@ -68,12 +68,10 @@ const addEmployee = async (req, res) => {
         academicTitle,
         degree,
         department: new mongoose.Types.ObjectId(department),
-        // salary,skill,education,certificate,dilopma
         oldDepartment: new mongoose.Types.ObjectId(department),
         salary,
         skill,
         certificate,
-        dilopma
     })
     await newEmployee.save()
     return res.status(200).json({success: true, message: "employee created"})
@@ -142,7 +140,7 @@ const updateEmployee = async(req, res) => {
     try{
         const {id} = req.params;
         const {
-            name, maritalStatus, academicTitle, degree, department, salary, address, employeeId,skill,certificate,dilopma
+            name, maritalStatus, academicTitle, degree, department, salary, address, employeeId,skill,certificate
         } = req.body;
         const employee = await Employee.findById({_id: id})
         if(!employee){
@@ -163,8 +161,7 @@ const updateEmployee = async(req, res) => {
                 address,
                 employeeId,
                 skill,
-                certificate,
-                dilopma
+                certificate
             }
         if(department && mongoose.Types.ObjectId.isValid(department)){
             if(employee.department.toString() !== department){

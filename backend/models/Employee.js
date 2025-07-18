@@ -8,7 +8,6 @@ const employeeSchema = new Schema({
     identification: {type: Number, required: true},
     dob: {type: Date},
     gender: {type: String},
-    dilopma: {type: String},
     certificate: {type: String},
     skill: {type: String},
     maritalStatus: {type: String},

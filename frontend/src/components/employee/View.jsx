@@ -94,20 +94,15 @@ const View = () => {
                 </div>
 
                 <div className='flex space-x-3 mb-5'>
-                    <p className='text-lg font-bold text-black'>Bằng cấp: </p>
-                    <p className='font-medium text-black'>{employee.dilopma} </p>
+                    <p className='text-lg font-bold text-black'>Học vị: </p>
+                    <p className='font-medium text-black'>
+                    {employee.degreeText || degreeMap[employee.degree] || employee.degree}
+                    </p>
                 </div>
 
                 <div className='flex space-x-3 mb-5'>
                 <p className='text-lg font-bold text-black'>Học hàm: </p>
                     <p className='font-medium text-black'>{employee.academicTitle || 'Chưa có'} </p>
-                </div>
-
-                <div className='flex space-x-3 mb-5'>
-                    <p className='text-lg font-bold text-black'>Học vị: </p>
-                    <p className='font-medium text-black'>
-                    {employee.degreeText || degreeMap[employee.degree] || employee.degree}
-                    </p>
                 </div>
 
                 <div className='flex space-x-3 mb-5'>

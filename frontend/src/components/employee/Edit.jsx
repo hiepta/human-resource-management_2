@@ -7,13 +7,11 @@ import { useNavigate, useParams } from 'react-router-dom'
 const Edit = () => {
     const [employee, setEmployee] = useState({
         name: '',
-        maritalStatus: '',
-        
+        maritalStatus: '',  
         salary: 0,
         department: '',
         oldDepartment: '',
         certificate: '',
-        dilopma: '',
         academicTitle: '',
         degree: '',
         skill: ''
@@ -56,7 +54,6 @@ const Edit = () => {
                   employeeId: employee.employeeId,
                   skill: employee.skill,
                   certificate: employee.certificate,
-                  dilopma: employee.dilopma,
                 }))
               }
             }catch(error){
@@ -104,16 +101,6 @@ const Edit = () => {
         </div>
         
         <div>
-            <label className='block text-sm font-medium text-gray-700'>Bằng cấp</label>
-            <select name='dilopma' value={employee.dilopma} onChange={handleChange} placeholder='Bằng cấp' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'>
-                <option value="">Bằng cấp</option>
-                <option value="cử nhân">Cử nhân</option>
-                <option value="kĩ sư">Kĩ sư</option>
-            </select>
-        </div>
-
-        
-        <div>
             <label className='block text-sm font-medium text-gray-700'>Chứng chỉ liên quan</label>
             <input type="text" value={employee.certificate} onChange={handleChange} name='certificate' placeholder='Chứng chỉ' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'/>
         </div>
@@ -138,15 +125,6 @@ const Edit = () => {
         </div>
 
         <div>
-        <label className='block text-sm font-medium text-gray-700'>Học hàm</label>
-            <select name='academicTitle' value={employee.academicTitle} onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md'>
-                <option value="">Học hàm</option>
-                <option value="PGS">PGS</option>
-                <option value="GS">GS</option>
-            </select>
-        </div>
-
-        <div>
             <label className='block text-sm font-medium text-gray-700'>Học vị</label>
             <select name='degree' value={employee.degree} onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'>
                 <option value="">Học vị</option>
@@ -156,6 +134,16 @@ const Edit = () => {
             </select>
         </div>
 
+
+        <div>
+        <label className='block text-sm font-medium text-gray-700'>Học hàm</label>
+            <select name='academicTitle' value={employee.academicTitle} onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md'>
+                <option value="">Học hàm</option>
+                <option value="PGS">PGS</option>
+                <option value="GS">GS</option>
+            </select>
+        </div>
+        
         <div>
             <label className='block text-sm font-medium text-gray-700'>Địa chỉ</label>
             <input type="text" onChange={handleChange} value={employee.address} name='address' placeholder='Địa chỉ' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'/>

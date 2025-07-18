@@ -142,23 +142,7 @@ const Add = () => {
                 <option value="other">Khác</option>
             </select>
         </div>
-        
-        <div>
-            <label className='block text-sm font-medium text-gray-700'>Bằng cấp</label>
-            <select name='dilopma' onChange={handleChange} placeholder='Bằng cấp' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'>
-                <option value="">Bằng cấp</option>
-                <option value="cử nhân">Cử nhân</option>
-                <option value="kĩ sư">Kĩ sư</option>
-            </select>
-        </div>
-        <div>
-        <label className='block text-sm font-medium text-gray-700'>Học hàm</label>
-            <select name='academicTitle' onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md'>
-                <option value="">Học hàm</option>
-                <option value="PGS">PGS</option>
-                <option value="GS">GS</option>
-            </select>
-        </div>
+
         <div>
             <label className='block text-sm font-medium text-gray-700'>Học vị</label>
             <select name='degree' onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'>
@@ -168,6 +152,16 @@ const Add = () => {
                 <option value="doctor">Tiến sĩ</option>
             </select>
         </div>
+
+        <div>
+            <label className='block text-sm font-medium text-gray-700'>Học hàm</label>
+            <select name='academicTitle' onChange={handleChange} className='mt-1 p-2 block w-full border border-gray-300 rounded-md'>
+                <option value="">Học hàm</option>
+                <option value="PGS">PGS</option>
+                <option value="GS">GS</option>
+            </select>
+        </div>
+        
         <div>
             <label className='block text-sm font-medium text-gray-700'>Chứng chỉ liên quan</label>
             <input type="text" onChange={handleChange} name='certificate' placeholder='Chứng chỉ' className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'/>
@@ -200,7 +194,7 @@ const Add = () => {
 
         <div>
             <label className='block text-sm font-medium text-gray-700'>Lương</label>
-            <input type="number" onChange={handleChange} name='salary' value={formData.salary} className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'/>
+            <input type="number" readOnly onChange={handleChange} name='salary' value={formData.salary} className='mt-1 p-2 block w-full border border-gray-300 rounded-md required'/>
         </div>
 
         <div>
