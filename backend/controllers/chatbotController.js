@@ -123,8 +123,7 @@ const getSalaryAmount = async (req, res) => {
     const baseSalary = employee.salary
     const contract = await Contract.findOne({ employeeId: employee._id }).sort({ startDate: -1 })
     const salaryCoefficient = contract ? contract.salaryCoefficient : 1
-    const firstContract = await Contract.findOne({ employeeId: employee._id }).sort({ startDate: 1 })
-    const yearsOfSeniority = firstContract ? Math.floor((now - firstContract.startDate) / (1000 * 60 * 60 * 24 * 365)) : 0
+    const yearsOfSeniority = contract ? Math.floor(contract.duration / 365) : 0
 
     const salary = baseSalary * salaryCoefficient
     const teachingAllowance = salary * 0.25
